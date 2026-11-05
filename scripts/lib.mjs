@@ -5,7 +5,6 @@ import { fileURLToPath } from 'node:url';
 
 export const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 export const DATA_DIR = join(ROOT, 'public', 'data');
-export const HISTORY_DIR = join(ROOT, 'history');
 
 export function readJson(path, fallback = undefined) {
   if (!existsSync(path)) {

@@ -1,5 +1,5 @@
-// Writes made-up metrics.json + insights.json so the dashboard can be previewed before the
-// first real run. Both files are flagged demo: true and the page shows a banner.
+// Writes made-up metrics.json so the dashboard can be previewed before the
+// first real run. The file is flagged demo: true and the page shows a banner.
 import { join } from 'node:path';
 import { DATA_DIR, loadGames, writeJson, isoDay } from './lib.mjs';
 import { summarize } from './fetch.mjs';
@@ -77,24 +77,4 @@ function fakeGame(game, base, trend) {
 const [a, b] = loadGames();
 const games = [fakeGame(a, 1200, 0.004), b && fakeGame(b, 420, -0.006)].filter(Boolean);
 writeJson(join(DATA_DIR, 'metrics.json'), { generatedAt: new Date().toISOString(), periodEnd: isoDay(1), demo: true, games });
-writeJson(join(DATA_DIR, 'insights.json'), {
-  generatedAt: new Date().toISOString(),
-  periodEnd: isoDay(1),
-  model: 'demo',
-  demo: true,
-  report: {
-    headline: 'Demo data: this is where Claude’s one-line takeaway for the day appears.',
-    overview:
-      'After the first real run, this paragraph compares all games week over week: who is growing, whose retention slipped, and where revenue moved.',
-    games: games.map((g, i) => ({
-      id: g.id,
-      status: i === 0 ? 'good' : 'watch',
-      summary: `Example summary for ${g.name}, written from the real numbers once the daily job runs.`,
-      highlights: ['Each highlight cites a number, e.g. DAU up 8% week over week.'],
-      concerns: ['Each concern cites a number too, e.g. level_fail up 30% against level_start.'],
-      actions: ['Concrete steps for this week, e.g. check level 12 difficulty in 1.0.6.'],
-    })),
-    watchNext: ['Things Claude wants to re-check in tomorrow’s data.'],
-  },
-});
-console.log('Wrote demo metrics.json and insights.json');
+console.log('Wrote demo metrics.json');

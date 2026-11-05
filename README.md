@@ -1,58 +1,45 @@
 # Games Dashboard
 
-Every day a GitHub Action runs this pipeline:
+Charts and numbers from Firebase Analytics for each game in `games.json`, updated every day.
 
-1. **`npm run fetch`** reads the last 30 days of Firebase Analytics for each game in `games.json` through the GA4 Data API and writes `public/data/metrics.json`. It computes all the numbers (DAU, new users, revenue, D1/D7 retention, events, versions, countries).
-2. **`npm run analyze`** sends those numbers, plus yesterday's report, to Claude. Claude writes `public/data/insights.json`: a headline, a status per game, highlights, concerns and actions. A copy goes to `history/`.
-3. The Action commits both files, and Vercel redeploys the static page in `public/`, which sits behind a password.
-
-Claude writes only the commentary. Every number comes from the fetch step, so the figures are exact.
+1. **`npm run fetch`** reads the last 30 days of each game's GA4 data and writes `public/data/metrics.json`. That covers DAU, new users, revenue, retention, events, app versions, countries and platforms.
+2. A GitHub Action runs this daily at 05:00 UTC and commits the new file. Vercel then redeploys the static page in `public/`, which sits behind a password.
 
 ## One-time setup
 
 ### 1. Google service account (read-only access to Analytics)
 
-1. In [console.cloud.google.com](https://console.cloud.google.com), create a project, for example `games-dashboard`.
-2. Under **APIs & Services → Library**, enable **Google Analytics Data API**.
-3. Under **IAM & Admin → Service Accounts → Create**, name it `dashboard-reader` and skip the role step.
-4. Open it, then go to **Keys → Add key → JSON** and download the file. Keep it private.
-5. In [analytics.google.com](https://analytics.google.com), for **each** game's property, go to **Admin → Property access management → +**. Add the service account's email with the **Viewer** role.
+1. In [console.cloud.google.com](https://console.cloud.google.com), create a project and enable **Google Analytics Data API** (under **APIs & Services → Library**).
+2. Under **IAM & Admin → Service Accounts → Create**, add a service account and download a **JSON key** for it.
+3. In [analytics.google.com](https://analytics.google.com), add the service account's email as a **Viewer** on each game's property (**Admin → Property access management**).
 
-### 2. Claude API key
+### 2. GitHub (runs the daily fetch)
 
-Create one at [console.anthropic.com](https://console.anthropic.com) under **API Keys**. Add a little credit under **Billing**.
+Open the repo's **Settings → Secrets and variables → Actions → New repository secret**. Add `GA_SA_KEY`, containing the entire contents of the service-account JSON file.
 
-### 3. GitHub (runs the daily job)
+Never commit the key file itself. `service-account*.json` is in `.gitignore`.
 
-1. Create a **private** repository and push this folder to it. The data files hold your revenue, so the repo must not be public.
-2. In the repo, open **Settings → Secrets and variables → Actions → New repository secret** and add:
-   - `GA_SA_KEY`: the entire contents of the service-account JSON file
-   - `ANTHROPIC_API_KEY`: your Claude API key. This one is optional: without it the numbers still update daily, but Claude's written report doesn't.
-3. Optionally, on the **Variables** tab, add `CLAUDE_MODEL` to use a different Claude model (the default is `claude-opus-5-5`).
+### 3. Vercel (hosts the page)
 
-### 4. Vercel (hosts the page)
+1. Go to **vercel.com → Add New → Project** and import this repository. `vercel.json` already sets the build, so leave the defaults.
+2. Under **Environment Variables**, add `DASHBOARD_PASSWORD`. The browser asks for it; any username works.
+3. Click **Deploy**.
 
-1. Go to **vercel.com → Add New → Project** and import the GitHub repository. `vercel.json` already sets everything; don't change the build settings.
-2. Under **Environment Variables**, add `DASHBOARD_PASSWORD`. The browser will ask for it; any username works.
-3. Click **Deploy**. The page shows demo data until the first daily run.
+### 4. First run
 
-### 5. First run
+In GitHub, open **Actions → Daily dashboard update → Run workflow**. Its commit triggers a new Vercel deploy.
 
-In GitHub, open **Actions → Daily dashboard update → Run workflow**. After it finishes, the new commit should trigger a Vercel deploy within a minute.
-
-If Vercel **doesn't** redeploy after the bot's commit, go to **Vercel → Project → Settings → Git → Deploy Hooks** and create a hook for the `main` branch. Add its URL as the GitHub secret `VERCEL_DEPLOY_HOOK`. The Action calls it after every run.
-
-After that it runs on its own every day at **05:00 UTC**. To change the time, edit `cron` in `.github/workflows/daily.yml`.
+If Vercel doesn't redeploy after the bot's commit, go to **Vercel → Settings → Git → Deploy Hooks** and create a hook for `main`. Add its URL as the GitHub secret `VERCEL_DEPLOY_HOOK`.
 
 ## Everyday changes
 
-- **Add a game:** add an entry to `games.json` (`id`, `name`, `ga4PropertyId`; optionally `currency`, which defaults to `USD`), then give the service account Viewer access on that property.
-- **Change what Claude focuses on:** edit `SYSTEM` in `scripts/analyze.mjs`.
-- **Preview locally:** run `npm run demo` for fake data, then serve `public/` with a static server, for example `python -m http.server --directory public`.
-- **Run the real pipeline locally:** set the `GA_SA_KEY` and `ANTHROPIC_API_KEY` environment variables, then run `npm run daily`.
+- **Add a game:** add an entry to `games.json` (`id`, `name`, `ga4PropertyId`, and optionally `currency`, which defaults to `USD`). Then give the service account Viewer access on that property.
+- **Fetch locally:** save the key as `service-account.json` in this folder and run `npm run fetch`.
+- **Preview locally:** serve the page with `python -m http.server --directory public`. Run `npm run demo` first if you want fake data.
 
 ## Notes
 
 - GA4 can revise the last day or two of data. Each run re-fetches 30 days, so older numbers correct themselves.
-- Ad revenue appears only if AdMob is linked to the game's Firebase project (**Firebase → Project settings → Integrations → AdMob**).
-- If one game's data fails (for example, missing access), the other games still update and the page shows the error on that game's card.
+- Retention averages use only install days with at least 20 installs.
+- Ad revenue shows only if AdMob is linked to the game's Firebase project.
+- If one game fails (for example, missing access), the others still update and that game's card shows the error.

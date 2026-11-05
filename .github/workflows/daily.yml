@@ -31,17 +31,11 @@ jobs:
         env:
           GA_SA_KEY: ${{ secrets.GA_SA_KEY }}
 
-      - name: Claude writes the daily report
-        run: npm run analyze
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          CLAUDE_MODEL: ${{ vars.CLAUDE_MODEL }}
-
       - name: Commit the new data
         run: |
           git config user.name "dashboard-bot"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add public/data history
+          git add public/data
           if git diff --cached --quiet; then
             echo "No changes."
           else
