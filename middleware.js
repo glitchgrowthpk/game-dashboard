@@ -1,14 +1,10 @@
 // Vercel Routing Middleware: puts a password in front of every page and data file.
-// Set DASHBOARD_PASSWORD in Vercel → Project → Settings → Environment Variables.
+// The password is "Glitch"; setting DASHBOARD_PASSWORD in Vercel overrides it.
 // The browser asks for a username and password; any username works.
 import { next } from '@vercel/functions';
 
 export default function middleware(request) {
-  const password = process.env.DASHBOARD_PASSWORD;
-  if (!password) {
-    // Fail closed: never serve the data without a password configured.
-    return new Response('Set DASHBOARD_PASSWORD in the Vercel project settings, then redeploy.', { status: 503 });
-  }
+  const password = process.env.DASHBOARD_PASSWORD || 'Glitch';
   const [scheme, encoded] = (request.headers.get('authorization') || '').split(' ');
   if (scheme === 'Basic' && encoded) {
     const decoded = atob(encoded);

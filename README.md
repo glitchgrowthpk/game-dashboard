@@ -22,8 +22,7 @@ Never commit the key file itself. `service-account*.json` is in `.gitignore`.
 ### 3. Vercel (hosts the page)
 
 1. Go to **vercel.com → Add New → Project** and import this repository. `vercel.json` already sets the build, so leave the defaults.
-2. Under **Environment Variables**, add `DASHBOARD_PASSWORD`. The browser asks for it; any username works.
-3. Click **Deploy**.
+2. Click **Deploy**. The page asks for a password: it's `Glitch`, and any username works. To change it, set the `DASHBOARD_PASSWORD` environment variable in Vercel.
 
 ### 4. First run
 
