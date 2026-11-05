@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Games Dashboard</title>
+  <meta name="robots" content="noindex" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+  <main class="wrap">
+    <header class="top">
+      <div>
+        <h1>Games Dashboard</h1>
+        <p class="meta" id="meta">Loading…</p>
+      </div>
+      <nav class="tabs" id="tabs" aria-label="Games"></nav>
+    </header>
+
+    <div class="banner" id="demo-banner" hidden>
+      Demo data. The real numbers and Claude's report appear after the first daily run.
+    </div>
+
+    <section class="card claude" id="claude" aria-labelledby="claude-title"></section>
+    <section id="overview"></section>
+    <div id="games"></div>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>

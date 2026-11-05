@@ -1,0 +1,57 @@
+name: Daily dashboard update
+
+on:
+  schedule:
+    - cron: '0 5 * * *' # 05:00 UTC every day
+  workflow_dispatch: # "Run workflow" button in the Actions tab
+
+permissions:
+  contents: write
+
+concurrency:
+  group: daily-dashboard
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: Fetch Firebase Analytics (GA4)
+        run: npm run fetch
+        env:
+          GA_SA_KEY: ${{ secrets.GA_SA_KEY }}
+
+      - name: Claude writes the daily report
+        run: npm run analyze
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          CLAUDE_MODEL: ${{ vars.CLAUDE_MODEL }}
+
+      - name: Commit the new data
+        run: |
+          git config user.name "dashboard-bot"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add public/data history
+          if git diff --cached --quiet; then
+            echo "No changes."
+          else
+            git commit -m "Daily data $(date -u +%Y-%m-%d)"
+            git push
+          fi
+
+      # Optional. Vercel normally redeploys on the push above; add this secret only if it doesn't.
+      - name: Redeploy on Vercel (deploy hook)
+        run: |
+          if [ -n "$HOOK" ]; then curl -fsS -X POST "$HOOK"; else echo "No VERCEL_DEPLOY_HOOK set; relying on the git push."; fi
+        env:
+          HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
