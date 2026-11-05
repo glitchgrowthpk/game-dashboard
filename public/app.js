@@ -18,6 +18,7 @@
   const games = metrics.games;
   const okGames = games.filter((g) => g.ok);
   const seriesVar = (i) => `--series-${(i % 3) + 1}`; // fixed order: game 1 blue, game 2 orange, game 3 aqua
+  const HINT = 'Click a line or its legend square to hide it. Click the legend again to show it.';
 
   // ---------- formatting ----------
   const int = (v) => (v == null ? '–' : Math.round(v).toLocaleString());
@@ -80,8 +81,8 @@
       </table></div>
     </div>
     ${okGames.length > 1 ? `<div class="grid two">
-      <div class="card"><h3>Daily active users</h3><div class="chart-box"><canvas id="all-dau"></canvas></div></div>
-      <div class="card"><h3>New users per day</h3><div class="chart-box"><canvas id="all-new"></canvas></div></div>
+      <div class="card"><h3>Daily active users</h3><div class="chart-box"><canvas id="all-dau"></canvas></div><p class="chart-caption">${HINT}</p></div>
+      <div class="card"><h3>New users per day</h3><div class="chart-box"><canvas id="all-new"></canvas></div><p class="chart-caption">${HINT}</p></div>
     </div>` : ''}`;
 
   // ---------- per-game sections ----------
@@ -125,10 +126,9 @@
         </div>
 
         <div class="grid three">
-          <div class="card"><h3>Daily active users</h3><div class="chart-box"><canvas id="dau-${i}"></canvas></div></div>
-          <div class="card"><h3>New users per day</h3><div class="chart-box"><canvas id="new-${i}"></canvas></div></div>
-          <div class="card"><h3>Daily revenue</h3><div class="chart-box"><canvas id="rev-${i}"></canvas></div>
-            <p class="chart-caption">${s.adRevenue ? `Ads ${money(s.adRevenue, g.currency)} of ${money(s.revenue, g.currency)} in the last 7 days` : 'No ad revenue recorded (AdMob may not be linked to this Firebase project)'}</p></div>
+          <div class="card"><h3>Users per day</h3><div class="chart-box"><canvas id="dau-${i}"></canvas></div><p class="chart-caption">${HINT}</p></div>
+          <div class="card"><h3>Revenue per day</h3><div class="chart-box"><canvas id="rev-${i}"></canvas></div>
+            <p class="chart-caption">${s.adRevenue ? `Ads ${money(s.adRevenue, g.currency)} of ${money(s.revenue, g.currency)} in the last 7 days.` : 'No ad revenue recorded (AdMob may not be linked to this Firebase project).'} ${HINT}</p></div>
           <div class="card"><h3>Minutes played per DAU</h3><div class="chart-box"><canvas id="eng-${i}"></canvas></div></div>
           <div class="card"><h3>Day-1 retention by install day</h3><div class="chart-box"><canvas id="ret-${i}"></canvas></div></div>
           <div class="card"><h3>Day-7 retention by install day</h3><div class="chart-box"><canvas id="ret7-${i}"></canvas></div>
@@ -197,8 +197,46 @@
       },
     };
   }
+  // ---------- click to hide ----------
+  // Multi-line charts: clicking a legend square (Chart.js default) or the line itself hides that line.
+  // Hidden lines stay in the legend, struck through; clicking the legend entry brings them back.
+  const HIT_PX = 10;
+  function segDist(px, py, ax, ay, bx, by) {
+    const dx = bx - ax, dy = by - ay;
+    const len2 = dx * dx + dy * dy;
+    const t = len2 ? Math.max(0, Math.min(1, ((px - ax) * dx + (py - ay) * dy) / len2)) : 0;
+    return Math.hypot(px - (ax + t * dx), py - (ay + t * dy));
+  }
+  function lineAt(chart, x, y) {
+    let best = null, bestD = HIT_PX;
+    chart.data.datasets.forEach((_, di) => {
+      if (!chart.isDatasetVisible(di)) return;
+      const pts = chart.getDatasetMeta(di).data.filter((p) => !p.skip);
+      for (let k = 0; k < pts.length; k++) {
+        const a = pts[k], b = pts[k + 1] ?? pts[k];
+        const d = segDist(x, y, a.x, a.y, b.x, b.y);
+        if (d < bestD) [bestD, best] = [d, di];
+      }
+    });
+    return best;
+  }
   const withLegend = (o) => {
-    o.plugins.legend = { display: true, position: 'top', align: 'start', labels: { boxWidth: 12, boxHeight: 12, color: css('--ink-2') } };
+    o.plugins.legend = {
+      display: true,
+      position: 'top',
+      align: 'start',
+      labels: { boxWidth: 12, boxHeight: 12, color: css('--ink-2') },
+      onHover: (e) => (e.native.target.style.cursor = 'pointer'),
+      onLeave: (e) => (e.native.target.style.cursor = ''),
+    };
+    o.onClick = (e, _els, chart) => {
+      const di = lineAt(chart, e.x, e.y);
+      if (di != null) chart.hide(di);
+    };
+    o.onHover = (e, _els, chart) => {
+      if (e.y < chart.chartArea.top) return; // over the legend: its own onHover sets the cursor
+      if (e.native?.target) e.native.target.style.cursor = lineAt(chart, e.x, e.y) != null ? 'pointer' : '';
+    };
     return o;
   };
   const line = (label, data, color) => ({ label, data, borderColor: color, backgroundColor: color, borderWidth: 2, pointRadius: 0, pointHoverRadius: 4, tension: 0.25, spanGaps: true });
@@ -229,9 +267,26 @@
       const color = css(seriesVar(i));
       const days = trimmed(g);
       const labels = days.map((d) => shortDate(d.date));
-      add(`dau-${i}`, { type: 'line', data: { labels, datasets: [line('DAU', days.map((d) => d.dau), color)] }, options: base(int) });
-      add(`new-${i}`, { type: 'bar', data: { labels, datasets: [bar('New users', days.map((d) => d.newUsers), color)] }, options: base(int) });
-      add(`rev-${i}`, { type: 'bar', data: { labels, datasets: [bar('Revenue', days.map((d) => d.revenue), color)] }, options: base((v) => money(v, g.currency)) });
+      // Multi-line charts use the fixed series order (blue, orange, aqua) and a legend.
+      const [c1, c2, c3] = [css('--series-1'), css('--series-2'), css('--series-3')];
+      add(`dau-${i}`, {
+        type: 'line',
+        data: { labels, datasets: [line('Active users', days.map((d) => d.dau), c1), line('New users', days.map((d) => d.newUsers), c2)] },
+        options: withLegend(base(int)),
+      });
+      const cents = (v) => Math.round(v * 100) / 100;
+      add(`rev-${i}`, {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [
+            line('Total', days.map((d) => d.revenue), c1),
+            line('Ads', days.map((d) => d.adRevenue), c2),
+            line('In-app purchases', days.map((d) => cents(Math.max(0, d.revenue - d.adRevenue))), c3),
+          ],
+        },
+        options: withLegend(base((v) => money(v, g.currency))),
+      });
       add(`eng-${i}`, {
         type: 'line',
         data: { labels, datasets: [line('Minutes', days.map((d) => (d.dau ? d.engagementSec / d.dau / 60 : null)), color)] },
