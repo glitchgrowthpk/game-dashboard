@@ -15,15 +15,17 @@
         <h1>Games Dashboard</h1>
         <p class="meta" id="meta">Loading…</p>
       </div>
-      <nav class="tabs" id="tabs" aria-label="Games"></nav>
+      <label class="picker">
+        <span>Game</span>
+        <select id="game-select" aria-label="Choose a game"></select>
+      </label>
     </header>
 
     <div class="banner" id="demo-banner" hidden>
       Demo data. The real numbers appear after the first daily run.
     </div>
 
-    <section id="overview"></section>
-    <div id="games"></div>
+    <div id="view"></div>
   </main>
   <script src="app.js"></script>
 </body>

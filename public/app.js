@@ -1,9 +1,17 @@
-// Renders public/data/metrics.json. No build step: plain JS + Chart.js. Numbers and charts only.
+// Renders public/data/metrics.json. No build step: plain JS + Chart.js.
+// One game at a time (picked from the menu), with two clubbed charts:
+//   Daily trend: a switcher (Users / Revenue / Playtime), each a multi-line chart
+//   Retention:   D1 and D7 side by side per install day
+// Secondary numbers, events and breakdowns sit in expandable sections.
 (async function () {
   const $ = (sel) => document.querySelector(sel);
   const css = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
   const esc = (s) =>
     String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+  const store = {
+    get: (k) => { try { return localStorage.getItem(k); } catch { return null; } },
+    set: (k, v) => { try { localStorage.setItem(k, v); } catch {} },
+  };
 
   let metrics;
   try {
@@ -17,8 +25,8 @@
 
   const games = metrics.games;
   const okGames = games.filter((g) => g.ok);
-  const seriesVar = (i) => `--series-${(i % 3) + 1}`; // fixed order: game 1 blue, game 2 orange, game 3 aqua
-  const HINT = 'Click a line or its legend square to hide it. Click the legend again to show it.';
+  const COMPARE = '__all';
+  const HINT = 'Click a line, bar or legend square to hide it. Click the legend again to show it.';
 
   // ---------- formatting ----------
   const int = (v) => (v == null ? '–' : Math.round(v).toLocaleString());
@@ -29,9 +37,10 @@
     try {
       return new Intl.NumberFormat(undefined, { style: 'currency', currency: cur || 'USD', minimumFractionDigits: digits, maximumFractionDigits: digits }).format(v);
     } catch {
-      return dec(v, 2);
+      return dec(v, digits);
     }
   };
+  const moneyAxis = (cur) => (v) => money(v, cur, Math.abs(v) > 0 && Math.abs(v) < 1 ? 3 : 2);
   const shortDate = (iso) => new Date(iso + 'T00:00:00Z').toLocaleDateString(undefined, { month: 'short', day: 'numeric', timeZone: 'UTC' });
   const change = (cur, prev) => (prev ? (cur - prev) / prev : null);
   const changeText = (ch) => (ch == null ? 'new' : `${ch >= 0 ? '+' : ''}${(ch * 100).toFixed(Math.abs(ch) < 0.1 ? 1 : 0)}%`);
@@ -46,113 +55,246 @@
     const arrow = cls === 'up' ? '▲' : cls === 'down' ? '▼' : '■';
     return `<span class="delta ${cls}">${arrow} ${(Math.abs(ch) * 100).toFixed(1)}% vs prior 7d</span>`;
   }
+  const tile = (label, value, sub) => `<div class="tile"><div class="k">${label}</div><div class="v">${value}</div>${sub}</div>`;
+  const note = (text) => `<span class="delta flat">${text}</span>`;
 
   // Charts start at the first day with any users, so a new game isn't half empty space.
   const firstActive = (days) => Math.max(0, days.findIndex((d) => d.dau > 0));
-  const trimmed = (g) => g.daily.slice(firstActive(g.daily));
   const ev = (g, name) => g.events?.find((e) => e.name === name);
+  const minutes = (d) => (d.dau ? d.engagementSec / d.dau / 60 : null);
+  const sessionsPer = (d) => (d.dau ? d.sessions / d.dau : null);
+  const inApp = (d) => Math.round(Math.max(0, d.revenue - d.adRevenue) * 100) / 100;
 
-  // ---------- header ----------
+  // ---------- header + game menu ----------
   const updated = new Date(metrics.generatedAt).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
   $('#meta').textContent = `Data through ${shortDate(metrics.periodEnd)} · updated ${updated}`;
   $('#demo-banner').hidden = !metrics.demo;
 
-  // ---------- overview (all games) ----------
-  $('#overview').innerHTML = `
-    <div class="card">
-      <h2>All games, last 7 days</h2>
-      <div class="table-scroll"><table>
-        <thead><tr><th>Game</th><th>Avg DAU</th><th>vs prior</th><th>Yesterday DAU</th><th>New users</th><th>D1</th><th>D7</th><th>Min/DAU</th><th>Revenue</th><th>Uninstalls</th></tr></thead>
-        <tbody>${games
-          .map((g) => {
-            if (!g.ok) return `<tr><td>${esc(g.name)}</td><td colspan="9">Data failed: ${esc(g.error)}</td></tr>`;
-            const s = g.summary.last7, p = g.summary.prev7;
-            return `<tr>
-              <td>${esc(g.name)}</td>
-              <td>${int(s.dauAvg)}</td>
-              <td>${isNewGame(g) ? 'new' : changeText(change(s.dauAvg, p.dauAvg))}</td>
-              <td>${int(g.summary.yesterday?.dau)}</td>
-              <td>${int(s.newUsers)}</td><td>${pct(g.retention?.d1)}</td><td>${pct(g.retention?.d7)}</td>
-              <td>${dec(s.engagementMinPerDau)}</td>
-              <td>${money(s.revenue, g.currency)}</td>
-              <td>${int(ev(g, 'app_remove')?.count7)}</td></tr>`;
-          })
-          .join('')}</tbody>
-      </table></div>
-    </div>
-    ${okGames.length > 1 ? `<div class="grid two">
-      <div class="card"><h3>Daily active users</h3><div class="chart-box"><canvas id="all-dau"></canvas></div><p class="chart-caption">${HINT}</p></div>
-      <div class="card"><h3>New users per day</h3><div class="chart-box"><canvas id="all-new"></canvas></div><p class="chart-caption">${HINT}</p></div>
-    </div>` : ''}`;
+  const select = $('#game-select');
+  select.innerHTML =
+    games.map((g) => `<option value="${esc(g.id)}">${esc(g.name)}</option>`).join('') +
+    (games.length > 1 ? `<option value="${COMPARE}">All games (compare)</option>` : '');
+  const saved = store.get('dash-game');
+  select.value = [...select.options].some((o) => o.value === saved) ? saved : games[0]?.id;
+  select.addEventListener('change', () => {
+    store.set('dash-game', select.value);
+    render();
+  });
 
-  // ---------- per-game sections ----------
-  $('#games').innerHTML = games
-    .map((g, i) => {
-      if (!g.ok) {
-        return `<section class="game" data-game="${esc(g.id)}">
-          <div class="game-head"><h2>${esc(g.name)}</h2></div>
-          <div class="card error"><strong>Couldn't fetch data.</strong><p class="warn-list">${esc(g.error)}</p>
-          <p class="warn-list">Check that the service account is a Viewer on GA4 property ${esc(g.propertyId)}.</p></div></section>`;
+  // ---------- charts: shared look + click to hide ----------
+  let charts = [];
+  const destroyCharts = () => {
+    charts.forEach((c) => c.destroy());
+    charts = [];
+  };
+  const HIT_PX = 10;
+  function segDist(px, py, ax, ay, bx, by) {
+    const dx = bx - ax, dy = by - ay;
+    const len2 = dx * dx + dy * dy;
+    const t = len2 ? Math.max(0, Math.min(1, ((px - ax) * dx + (py - ay) * dy) / len2)) : 0;
+    return Math.hypot(px - (ax + t * dx), py - (ay + t * dy));
+  }
+  /** Index of the dataset under (x, y): the line within HIT_PX, or the bar under the pointer. */
+  function datasetAt(chart, e) {
+    if (chart.config.type === 'bar') {
+      const hit = chart.getElementsAtEventForMode(e, 'nearest', { intersect: true }, false)[0];
+      return hit ? hit.datasetIndex : null;
+    }
+    let best = null, bestD = HIT_PX;
+    chart.data.datasets.forEach((_, di) => {
+      if (!chart.isDatasetVisible(di)) return;
+      const pts = chart.getDatasetMeta(di).data.filter((p) => !p.skip);
+      for (let k = 0; k < pts.length; k++) {
+        const a = pts[k], b = pts[k + 1] ?? pts[k];
+        const d = segDist(e.x, e.y, a.x, a.y, b.x, b.y);
+        if (d < bestD) [bestD, best] = [d, di];
       }
-      const s = g.summary.last7, p = g.summary.prev7;
-      const start = ev(g, 'level_start');
-      const done = ev(g, 'level_complete') ?? ev(g, 'level_end');
-      const doneLabel = ev(g, 'level_complete') ? 'Level win rate' : 'Levels finished';
-      const winRate = start?.count7 && done ? done.count7 / start.count7 : null;
-      const winPrev = start?.prev7 && done?.prev7 ? done.prev7 / start.prev7 : null;
-      const installs = ev(g, 'first_open'), removes = ev(g, 'app_remove');
-      const offers = ev(g, 'adoffer'), rewards = ev(g, 'ad_reward');
-      const arpdau = s.dauAvg ? s.revenue / 7 / s.dauAvg : null;
-      const arpdauPrev = p.dauAvg ? p.revenue / 7 / p.dauAvg : null;
-      return `<section class="game" data-game="${esc(g.id)}">
-        <div class="game-head">
-          <span class="swatch" style="background:var(${seriesVar(i)})" aria-hidden="true"></span>
-          <h2>${esc(g.name)}</h2>
-          <span class="meta">GA4 property ${esc(g.propertyId)} · last 7 days vs the 7 before</span>
-        </div>
+    });
+    return best;
+  }
+  function options(yFormat, { legend = true } = {}) {
+    return {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: {
+          display: legend,
+          position: 'top',
+          align: 'start',
+          labels: { boxWidth: 12, boxHeight: 12, color: css('--ink-2') },
+          onHover: (e) => (e.native.target.style.cursor = 'pointer'),
+          onLeave: (e) => (e.native.target.style.cursor = ''),
+        },
+        tooltip: { callbacks: { label: (c) => ` ${c.dataset.label}: ${yFormat(c.parsed.y)}` } },
+      },
+      scales: {
+        x: { grid: { display: false }, border: { color: css('--axis') }, ticks: { color: css('--muted'), maxTicksLimit: 8, maxRotation: 0 } },
+        y: { beginAtZero: true, grid: { color: css('--grid') }, border: { display: false }, ticks: { color: css('--muted'), maxTicksLimit: 5, callback: yFormat } },
+      },
+      onClick: (e, _els, chart) => {
+        const di = datasetAt(chart, e);
+        if (di != null) chart.hide(di);
+      },
+      onHover: (e, _els, chart) => {
+        if (e.y < chart.chartArea.top || !e.native?.target) return; // over the legend: its own onHover sets the cursor
+        e.native.target.style.cursor = datasetAt(chart, e) != null ? 'pointer' : '';
+      },
+    };
+  }
+  const seriesColor = (i) => css(`--series-${(i % 3) + 1}`); // fixed order: blue, orange, aqua
+  const line = (label, data, i) => {
+    const c = seriesColor(i);
+    // monotone curves never overshoot between points (no dips below zero on sparse data)
+    return { label, data, borderColor: c, backgroundColor: c, borderWidth: 2, pointRadius: 0, pointHoverRadius: 4, cubicInterpolationMode: 'monotone', spanGaps: true };
+  };
+  const bar = (label, data, i) => ({ label, data, backgroundColor: seriesColor(i), borderRadius: 4, borderSkipped: 'start', maxBarThickness: 14 });
+  const add = (id, config) => {
+    const el = document.getElementById(id);
+    if (!el) return null;
+    const chart = new Chart(el, config);
+    charts.push(chart);
+    return chart;
+  };
 
+  /** A card with a segmented switcher; each view is { id, label, draw() -> chart config }. */
+  function switcherCard(key, title, views) {
+    const current = views.some((v) => v.id === store.get(key)) ? store.get(key) : views[0].id;
+    return {
+      html: `<div class="card">
+        <div class="card-head"><h3>${title}</h3>
+          <div class="seg" role="group" aria-label="${esc(title)}" data-key="${key}">
+            ${views.map((v) => `<button type="button" data-view="${v.id}" aria-pressed="${v.id === current}">${v.label}</button>`).join('')}
+          </div>
+        </div>
+        <div class="chart-box tall"><canvas id="${key}-canvas"></canvas></div>
+        <p class="chart-caption" id="${key}-caption"></p>
+      </div>`,
+      mount() {
+        let chart = null;
+        const show = (id) => {
+          const v = views.find((x) => x.id === id) ?? views[0];
+          store.set(key, v.id);
+          document.querySelectorAll(`[data-key="${key}"] button`).forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.view === v.id)));
+          if (chart) {
+            charts = charts.filter((c) => c !== chart);
+            chart.destroy();
+          }
+          chart = add(`${key}-canvas`, v.draw());
+          $(`#${key}-caption`).textContent = [v.caption, HINT].filter(Boolean).join(' ');
+        };
+        document.querySelector(`[data-key="${key}"]`).addEventListener('click', (e) => e.target.dataset?.view && show(e.target.dataset.view));
+        show(current);
+      },
+    };
+  }
+
+  // ---------- one game ----------
+  function gameView(g) {
+    if (!g.ok) {
+      return {
+        html: `<div class="card error"><h2>${esc(g.name)}</h2><strong>Couldn't fetch data.</strong>
+          <p class="warn-list">${esc(g.error)}</p>
+          <p class="warn-list">Check that the service account is a Viewer on GA4 property ${esc(g.propertyId)}.</p></div>`,
+        mount() {},
+      };
+    }
+    const s = g.summary.last7, p = g.summary.prev7, cur = g.currency;
+    const days = g.daily.slice(firstActive(g.daily));
+    const labels = days.map((d) => shortDate(d.date));
+
+    const trend = switcherCard('trend', 'Daily trend', [
+      {
+        id: 'users', label: 'Users',
+        draw: () => ({ type: 'line', data: { labels, datasets: [line('Active users', days.map((d) => d.dau), 0), line('New users', days.map((d) => d.newUsers), 1)] }, options: options(int) }),
+      },
+      {
+        id: 'revenue', label: 'Revenue',
+        caption: s.adRevenue ? `Ads ${money(s.adRevenue, cur)} of ${money(s.revenue, cur)} in the last 7 days.` : 'No ad revenue recorded (AdMob may not be linked to this Firebase project).',
+        draw: () => ({
+          type: 'line',
+          data: { labels, datasets: [line('Total', days.map((d) => d.revenue), 0), line('Ads', days.map((d) => d.adRevenue), 1), line('In-app purchases', days.map(inApp), 2)] },
+          options: options(moneyAxis(cur)),
+        }),
+      },
+      {
+        id: 'playtime', label: 'Playtime',
+        draw: () => ({
+          type: 'line',
+          data: { labels, datasets: [line('Minutes per active user', days.map(minutes), 0), line('Sessions per active user', days.map(sessionsPer), 1)] },
+          options: options((v) => dec(v)),
+        }),
+      },
+    ]);
+
+    const cohorts = (g.retention?.cohorts ?? []).filter((c) => c.users >= 20);
+    const start = ev(g, 'level_start');
+    const done = ev(g, 'level_complete') ?? ev(g, 'level_end');
+    const winRate = start?.count7 && done ? done.count7 / start.count7 : null;
+    const winPrev = start?.prev7 && done?.prev7 ? done.prev7 / start.prev7 : null;
+    const installs = ev(g, 'first_open'), removes = ev(g, 'app_remove');
+    const offers = ev(g, 'adoffer'), rewards = ev(g, 'ad_reward');
+    const arpdau = s.dauAvg ? s.revenue / 7 / s.dauAvg : null;
+    const arpdauPrev = p.dauAvg ? p.revenue / 7 / p.dauAvg : null;
+    const more = [
+      tile('ARPDAU', money(arpdau, cur, 4), delta(arpdau, arpdauPrev, g)),
+      tile('Sessions per DAU', dec(s.sessionsPerDau, 2), delta(s.sessionsPerDau, p.sessionsPerDau, g)),
+      winRate != null ? tile(ev(g, 'level_complete') ? 'Level win rate' : 'Levels finished', pct(winRate), delta(winRate, winPrev, g)) : '',
+      installs?.count7 && removes ? tile('Uninstalls per install', pct(removes.count7 / installs.count7), note(`${int(removes.count7)} of ${int(installs.count7)}`)) : '',
+      offers?.count7 && rewards ? tile('Rewarded ads watched', pct(rewards.count7 / offers.count7), note(`${int(rewards.count7)} of ${int(offers.count7)} offers`)) : '',
+      tile('Yesterday DAU', int(g.summary.yesterday?.dau), note(shortDate(g.summary.yesterday?.date ?? metrics.periodEnd))),
+    ].join('');
+
+    return {
+      html: `
+        <div class="view-head"><h2>${esc(g.name)}</h2><span class="meta">Last 7 days vs the 7 before · GA4 property ${esc(g.propertyId)}</span></div>
         <div class="tiles">
-          <div class="tile"><div class="k">Avg DAU</div><div class="v">${int(s.dauAvg)}</div>${delta(s.dauAvg, p.dauAvg, g)}</div>
-          <div class="tile"><div class="k">New users</div><div class="v">${int(s.newUsers)}</div>${delta(s.newUsers, p.newUsers, g)}</div>
-          <div class="tile"><div class="k">Revenue</div><div class="v">${money(s.revenue, g.currency)}</div>${delta(s.revenue, p.revenue, g)}</div>
-          <div class="tile"><div class="k">ARPDAU</div><div class="v">${money(arpdau, g.currency, 4)}</div>${delta(arpdau, arpdauPrev, g)}</div>
-          <div class="tile"><div class="k">Day-1 retention</div><div class="v">${pct(g.retention?.d1)}</div><span class="delta flat">install cohorts, 14 days</span></div>
-          <div class="tile"><div class="k">Day-7 retention</div><div class="v">${pct(g.retention?.d7)}</div><span class="delta flat">install cohorts, 14 days</span></div>
-          <div class="tile"><div class="k">Minutes per DAU</div><div class="v">${dec(s.engagementMinPerDau)}</div>${delta(s.engagementMinPerDau, p.engagementMinPerDau, g)}</div>
-          <div class="tile"><div class="k">Sessions per DAU</div><div class="v">${dec(s.sessionsPerDau, 2)}</div>${delta(s.sessionsPerDau, p.sessionsPerDau, g)}</div>
-          ${winRate != null ? `<div class="tile"><div class="k">${doneLabel}</div><div class="v">${pct(winRate)}</div>${delta(winRate, winPrev, g)}</div>` : ''}
-          ${installs?.count7 && removes ? `<div class="tile"><div class="k">Uninstalls per install</div><div class="v">${pct(removes.count7 / installs.count7)}</div><span class="delta flat">${int(removes.count7)} of ${int(installs.count7)}</span></div>` : ''}
-          ${offers?.count7 && rewards ? `<div class="tile"><div class="k">Rewarded ads watched</div><div class="v">${pct(rewards.count7 / offers.count7)}</div><span class="delta flat">${int(rewards.count7)} of ${int(offers.count7)} offers</span></div>` : ''}
+          ${tile('Avg DAU', int(s.dauAvg), delta(s.dauAvg, p.dauAvg, g))}
+          ${tile('New users', int(s.newUsers), delta(s.newUsers, p.newUsers, g))}
+          ${tile('Revenue', money(s.revenue, cur), delta(s.revenue, p.revenue, g))}
+          ${tile('Day-1 retention', pct(g.retention?.d1), note('install cohorts, 14 days'))}
+          ${tile('Day-7 retention', pct(g.retention?.d7), note('install cohorts, 14 days'))}
+          ${tile('Minutes per DAU', dec(s.engagementMinPerDau), delta(s.engagementMinPerDau, p.engagementMinPerDau, g))}
         </div>
-
-        <div class="grid three">
-          <div class="card"><h3>Users per day</h3><div class="chart-box"><canvas id="dau-${i}"></canvas></div><p class="chart-caption">${HINT}</p></div>
-          <div class="card"><h3>Revenue per day</h3><div class="chart-box"><canvas id="rev-${i}"></canvas></div>
-            <p class="chart-caption">${s.adRevenue ? `Ads ${money(s.adRevenue, g.currency)} of ${money(s.revenue, g.currency)} in the last 7 days.` : 'No ad revenue recorded (AdMob may not be linked to this Firebase project).'} ${HINT}</p></div>
-          <div class="card"><h3>Minutes played per DAU</h3><div class="chart-box"><canvas id="eng-${i}"></canvas></div></div>
-          <div class="card"><h3>Day-1 retention by install day</h3><div class="chart-box"><canvas id="ret-${i}"></canvas></div></div>
-          <div class="card"><h3>Day-7 retention by install day</h3><div class="chart-box"><canvas id="ret7-${i}"></canvas></div>
-            <p class="chart-caption">Install days appear once day 7 has passed</p></div>
+        <div class="grid main">
+          ${trend.html}
+          <div class="card">
+            <div class="card-head"><h3>Retention by install day</h3></div>
+            <div class="chart-box tall"><canvas id="ret-canvas"></canvas></div>
+            <p class="chart-caption">Day 7 appears once that day has passed. Install days with under 20 installs are left out. ${HINT}</p>
+          </div>
         </div>
-
-        <div class="grid two" style="margin-top:16px">
-          <div class="card"><h3>Events, last 7 days</h3><div class="table-scroll"><table>
+        <details class="card fold"><summary>More numbers</summary><div class="tiles">${more}</div></details>
+        <details class="card fold"><summary>Events, last 7 days (${(g.events ?? []).length})</summary>
+          <div class="table-scroll"><table>
             <thead><tr><th>Event</th><th>Count</th><th>Prior 7d</th><th>Change</th><th>Users</th><th>Per user</th></tr></thead>
             <tbody>${(g.events ?? [])
               .map((e) => `<tr><td>${esc(e.name)}</td><td>${int(e.count7)}</td><td>${int(e.prev7)}</td>
                 <td>${changeText(change(e.count7, e.prev7))}</td><td>${int(e.users7)}</td>
                 <td>${e.users7 ? dec(e.count7 / e.users7) : '–'}</td></tr>`)
-              .join('')}</tbody></table></div></div>
-          <div class="card">
-            ${breakdown('App versions (users, 7d)', g.versions)}
-            ${breakdown('Countries', g.countries)}
-            ${breakdown('Platforms', g.platforms)}
-            ${g.warnings?.length ? `<h3>Data warnings</h3><ul class="warn-list">${g.warnings.map((w) => `<li>${esc(w)}</li>`).join('')}</ul>` : ''}
+              .join('')}</tbody></table></div>
+        </details>
+        <details class="card fold"><summary>App versions, countries and platforms</summary>
+          <div class="grid three">
+            <div>${breakdown('App versions (users, 7d)', g.versions)}</div>
+            <div>${breakdown('Countries', g.countries)}</div>
+            <div>${breakdown('Platforms', g.platforms)}</div>
           </div>
-        </div>
-      </section>`;
-    })
-    .join('');
+          ${g.warnings?.length ? `<h3>Data warnings</h3><ul class="warn-list">${g.warnings.map((w) => `<li>${esc(w)}</li>`).join('')}</ul>` : ''}
+        </details>`,
+      mount() {
+        trend.mount();
+        const o = options(pct);
+        o.plugins.tooltip.callbacks.afterBody = (items) => (items[0] ? ` ${int(cohorts[items[0].dataIndex].users)} installs` : '');
+        add('ret-canvas', {
+          type: 'bar',
+          data: { labels: cohorts.map((c) => shortDate(c.date)), datasets: [bar('Day 1', cohorts.map((c) => c.d1), 0), bar('Day 7', cohorts.map((c) => c.d7), 1)] },
+          options: o,
+        });
+      },
+    };
+  }
 
   function breakdown(title, rows) {
     if (!rows?.length) return '';
@@ -163,143 +305,59 @@
       .join('')}</ul>`;
   }
 
-  // ---------- tabs ----------
-  const tabs = [{ id: 'all', name: 'All games' }, ...games.map((g) => ({ id: g.id, name: g.name }))];
-  let active = 'all';
-  try { active = localStorage.getItem('dash-tab') || 'all'; } catch {}
-  if (!tabs.some((t) => t.id === active)) active = 'all';
-  function showTab(id) {
-    active = id;
-    try { localStorage.setItem('dash-tab', id); } catch {}
-    $('#tabs').querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.id === id)));
-    $('#overview').classList.toggle('hidden', id !== 'all');
-    document.querySelectorAll('.game').forEach((s) => s.classList.toggle('hidden', id !== 'all' && s.dataset.game !== id));
-  }
-  $('#tabs').innerHTML = tabs.map((t) => `<button type="button" data-id="${esc(t.id)}">${esc(t.name)}</button>`).join('');
-  $('#tabs').addEventListener('click', (e) => e.target.dataset?.id && showTab(e.target.dataset.id));
-  showTab(active);
-
-  // ---------- charts ----------
-  let charts = [];
-  function base(yFormat) {
+  // ---------- all games (compare) ----------
+  function compareView() {
+    const start = Math.min(...okGames.map((g) => firstActive(g.daily)));
+    const labels = (okGames[0]?.daily ?? []).slice(start).map((d) => shortDate(d.date));
+    const perGame = (fn, i0 = 0) => okGames.map((g, i) => line(g.name, g.daily.slice(start).map(fn), i + i0));
+    const cur = okGames[0]?.currency;
+    const trend = switcherCard('compare', 'Daily trend, all games', [
+      { id: 'dau', label: 'Active users', draw: () => ({ type: 'line', data: { labels, datasets: perGame((d) => d.dau) }, options: options(int) }) },
+      { id: 'new', label: 'New users', draw: () => ({ type: 'line', data: { labels, datasets: perGame((d) => d.newUsers) }, options: options(int) }) },
+      { id: 'rev', label: 'Revenue', draw: () => ({ type: 'line', data: { labels, datasets: perGame((d) => d.revenue) }, options: options(moneyAxis(cur)) }) },
+      { id: 'min', label: 'Minutes per user', draw: () => ({ type: 'line', data: { labels, datasets: perGame(minutes) }, options: options((v) => dec(v)) }) },
+    ]);
     return {
-      responsive: true,
-      maintainAspectRatio: false,
-      animation: false,
-      interaction: { mode: 'index', intersect: false },
-      plugins: {
-        legend: { display: false },
-        tooltip: { callbacks: { label: (c) => ` ${c.dataset.label}: ${yFormat(c.parsed.y)}` } },
+      html: `
+        <div class="view-head"><h2>All games</h2><span class="meta">Last 7 days</span></div>
+        <div class="card">
+          <div class="table-scroll"><table>
+            <thead><tr><th>Game</th><th>Avg DAU</th><th>vs prior</th><th>New users</th><th>D1</th><th>D7</th><th>Min/DAU</th><th>Revenue</th></tr></thead>
+            <tbody>${games
+              .map((g) => {
+                if (!g.ok) return `<tr><td>${esc(g.name)}</td><td colspan="7">Data failed: ${esc(g.error)}</td></tr>`;
+                const s = g.summary.last7, p = g.summary.prev7;
+                return `<tr><td><button type="button" class="link" data-open="${esc(g.id)}">${esc(g.name)}</button></td>
+                  <td>${int(s.dauAvg)}</td><td>${isNewGame(g) ? 'new' : changeText(change(s.dauAvg, p.dauAvg))}</td>
+                  <td>${int(s.newUsers)}</td><td>${pct(g.retention?.d1)}</td><td>${pct(g.retention?.d7)}</td>
+                  <td>${dec(s.engagementMinPerDau)}</td><td>${money(s.revenue, g.currency)}</td></tr>`;
+              })
+              .join('')}</tbody>
+          </table></div>
+        </div>
+        ${okGames.length ? trend.html : ''}`,
+      mount() {
+        if (okGames.length) trend.mount();
+        document.querySelectorAll('[data-open]').forEach((b) =>
+          b.addEventListener('click', () => {
+            select.value = b.dataset.open;
+            select.dispatchEvent(new Event('change'));
+          })
+        );
       },
-      scales: {
-        x: { grid: { display: false }, border: { color: css('--axis') }, ticks: { color: css('--muted'), maxTicksLimit: 6, maxRotation: 0 } },
-        y: { beginAtZero: true, grid: { color: css('--grid') }, border: { display: false }, ticks: { color: css('--muted'), maxTicksLimit: 5, callback: yFormat } },
-      },
     };
   }
-  // ---------- click to hide ----------
-  // Multi-line charts: clicking a legend square (Chart.js default) or the line itself hides that line.
-  // Hidden lines stay in the legend, struck through; clicking the legend entry brings them back.
-  const HIT_PX = 10;
-  function segDist(px, py, ax, ay, bx, by) {
-    const dx = bx - ax, dy = by - ay;
-    const len2 = dx * dx + dy * dy;
-    const t = len2 ? Math.max(0, Math.min(1, ((px - ax) * dx + (py - ay) * dy) / len2)) : 0;
-    return Math.hypot(px - (ax + t * dx), py - (ay + t * dy));
-  }
-  function lineAt(chart, x, y) {
-    let best = null, bestD = HIT_PX;
-    chart.data.datasets.forEach((_, di) => {
-      if (!chart.isDatasetVisible(di)) return;
-      const pts = chart.getDatasetMeta(di).data.filter((p) => !p.skip);
-      for (let k = 0; k < pts.length; k++) {
-        const a = pts[k], b = pts[k + 1] ?? pts[k];
-        const d = segDist(x, y, a.x, a.y, b.x, b.y);
-        if (d < bestD) [bestD, best] = [d, di];
-      }
-    });
-    return best;
-  }
-  const withLegend = (o) => {
-    o.plugins.legend = {
-      display: true,
-      position: 'top',
-      align: 'start',
-      labels: { boxWidth: 12, boxHeight: 12, color: css('--ink-2') },
-      onHover: (e) => (e.native.target.style.cursor = 'pointer'),
-      onLeave: (e) => (e.native.target.style.cursor = ''),
-    };
-    o.onClick = (e, _els, chart) => {
-      const di = lineAt(chart, e.x, e.y);
-      if (di != null) chart.hide(di);
-    };
-    o.onHover = (e, _els, chart) => {
-      if (e.y < chart.chartArea.top) return; // over the legend: its own onHover sets the cursor
-      if (e.native?.target) e.native.target.style.cursor = lineAt(chart, e.x, e.y) != null ? 'pointer' : '';
-    };
-    return o;
-  };
-  const line = (label, data, color) => ({ label, data, borderColor: color, backgroundColor: color, borderWidth: 2, pointRadius: 0, pointHoverRadius: 4, tension: 0.25, spanGaps: true });
-  const bar = (label, data, color) => ({ label, data, backgroundColor: color, borderRadius: 4, borderSkipped: 'start', maxBarThickness: 18 });
-  const add = (id, config) => {
-    const el = document.getElementById(id);
-    if (el) charts.push(new Chart(el, config));
-  };
 
-  function drawCharts() {
-    charts.forEach((c) => c.destroy());
-    charts = [];
+  // ---------- render ----------
+  function render() {
+    destroyCharts();
     Chart.defaults.font.family = getComputedStyle(document.body).fontFamily;
     Chart.defaults.color = css('--ink-2');
-
-    // Overview: every game on one date axis, starting at the earliest active day of any game.
-    if (okGames.length > 1) {
-      const start = Math.min(...okGames.map((g) => firstActive(g.daily)));
-      const labels = okGames[0].daily.slice(start).map((d) => shortDate(d.date));
-      const series = (key) =>
-        games.map((g, i) => (g.ok ? line(g.name, g.daily.slice(start).map((d) => d[key]), css(seriesVar(i))) : null)).filter(Boolean);
-      add('all-dau', { type: 'line', data: { labels, datasets: series('dau') }, options: withLegend(base(int)) });
-      add('all-new', { type: 'line', data: { labels, datasets: series('newUsers') }, options: withLegend(base(int)) });
-    }
-
-    games.forEach((g, i) => {
-      if (!g.ok) return;
-      const color = css(seriesVar(i));
-      const days = trimmed(g);
-      const labels = days.map((d) => shortDate(d.date));
-      // Multi-line charts use the fixed series order (blue, orange, aqua) and a legend.
-      const [c1, c2, c3] = [css('--series-1'), css('--series-2'), css('--series-3')];
-      add(`dau-${i}`, {
-        type: 'line',
-        data: { labels, datasets: [line('Active users', days.map((d) => d.dau), c1), line('New users', days.map((d) => d.newUsers), c2)] },
-        options: withLegend(base(int)),
-      });
-      const cents = (v) => Math.round(v * 100) / 100;
-      add(`rev-${i}`, {
-        type: 'line',
-        data: {
-          labels,
-          datasets: [
-            line('Total', days.map((d) => d.revenue), c1),
-            line('Ads', days.map((d) => d.adRevenue), c2),
-            line('In-app purchases', days.map((d) => cents(Math.max(0, d.revenue - d.adRevenue))), c3),
-          ],
-        },
-        options: withLegend(base((v) => money(v, g.currency))),
-      });
-      add(`eng-${i}`, {
-        type: 'line',
-        data: { labels, datasets: [line('Minutes', days.map((d) => (d.dau ? d.engagementSec / d.dau / 60 : null)), color)] },
-        options: base((v) => dec(v)),
-      });
-      for (const [id, key] of [[`ret-${i}`, 'd1'], [`ret7-${i}`, 'd7']]) {
-        const cohorts = (g.retention?.cohorts ?? []).filter((c) => c[key] != null && c.users >= 20);
-        const o = base(pct);
-        o.plugins.tooltip.callbacks.afterLabel = (c) => ` ${int(cohorts[c.dataIndex].users)} installs`;
-        add(id, { type: 'bar', data: { labels: cohorts.map((c) => shortDate(c.date)), datasets: [bar(key.toUpperCase(), cohorts.map((c) => c[key]), color)] }, options: o });
-      }
-    });
+    const g = games.find((x) => x.id === select.value);
+    const view = g ? gameView(g) : compareView();
+    $('#view').innerHTML = view.html;
+    view.mount();
   }
-  drawCharts();
-  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', drawCharts);
+  render();
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', render);
 })();
