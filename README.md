@@ -3,7 +3,7 @@
 Charts and numbers from Firebase Analytics for each game in `games.json`, updated every day.
 
 1. **`npm run fetch`** reads the last 30 days of each game's GA4 data and writes `public/data/metrics.json`. That covers DAU, new users, revenue, retention, events, app versions, countries and platforms.
-2. A GitHub Action runs this daily at 05:00 UTC and commits the new file. Vercel then redeploys the static page in `public/`, which sits behind a password.
+2. A GitHub Action runs this daily at 11:00 Pakistan time (06:00 UTC) and commits the new file. Vercel then redeploys the static page in `public/`, which sits behind a password.
 
 ## One-time setup
 
