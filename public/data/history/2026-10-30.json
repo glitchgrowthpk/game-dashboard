@@ -1,0 +1,987 @@
+{
+  "generatedAt": "2026-11-06T06:55:10.517Z",
+  "periodEnd": "2026-10-30",
+  "demo": false,
+  "games": [
+    {
+      "id": "sword-knight",
+      "name": "Sword Knight Puzzle War",
+      "propertyId": "559933012",
+      "currency": "USD",
+      "ok": true,
+      "warnings": [],
+      "daily": [
+        {
+          "date": "2026-10-01",
+          "dau": 0,
+          "newUsers": 0,
+          "sessions": 0,
+          "engagementSec": 0,
+          "revenue": 0,
+          "adRevenue": 0
+        },
+        {
+          "date": "2026-10-02",
+          "dau": 0,
+          "newUsers": 0,
+          "sessions": 0,
+          "engagementSec": 0,
+          "revenue": 0,
+          "adRevenue": 0
+        },
+        {
+          "date": "2026-10-03",
+          "dau": 0,
+          "newUsers": 0,
+          "sessions": 0,
+          "engagementSec": 0,
+          "revenue": 0,
+          "adRevenue": 0
+        },
+        {
+          "date": "2026-10-04",
+          "dau": 0,
+          "newUsers": 0,
+          "sessions": 0,
+          "engagementSec": 0,
+          "revenue": 0,
+          "adRevenue": 0
+        },
+        {
+          "date": "2026-10-05",
+          "dau": 0,
+          "newUsers": 0,
+          "sessions": 0,
+          "engagementSec": 0,
+          "revenue": 0,
+          "adRevenue": 0
+        },
+        {
+          "date": "2026-10-06",
+          "dau": 0,
+          "newUsers": 0,
+          "sessions": 0,
+          "engagementSec": 0,
+          "revenue": 0,
+          "adRevenue": 0
+        },
+        {
+          "date": "2026-10-07",
+          "dau": 0,
+          "newUsers": 0,
+          "sessions": 0,
+          "engagementSec": 0,
+          "revenue": 0,
+          "adRevenue": 0
+        },
+        {
+          "date": "2026-10-08",
+          "dau": 0,
+          "newUsers": 0,
+          "sessions": 0,
+          "engagementSec": 0,
+          "revenue": 0,
+          "adRevenue": 0
+        },
+        {
+          "date": "2026-10-09",
+          "dau": 0,
+          "newUsers": 0,
+          "sessions": 0,
+          "engagementSec": 0,
+          "revenue": 0,
+          "adRevenue": 0
+        },
+        {
+          "date": "2026-10-10",
+          "dau": 0,
+          "newUsers": 0,
+          "sessions": 0,
+          "engagementSec": 0,
+          "revenue": 0,
+          "adRevenue": 0
+        },
+        {
+          "date": "2026-10-11",
+          "dau": 0,
+          "newUsers": 0,
+          "sessions": 0,
+          "engagementSec": 0,
+          "revenue": 0,
+          "adRevenue": 0
+        },
+        {
+          "date": "2026-10-12",
+          "dau": 0,
+          "newUsers": 0,
+          "sessions": 0,
+          "engagementSec": 0,
+          "revenue": 0,
+          "adRevenue": 0
+        },
+        {
+          "date": "2026-10-13",
+          "dau": 0,
+          "newUsers": 0,
+          "sessions": 0,
+          "engagementSec": 0,
+          "revenue": 0,
+          "adRevenue": 0
+        },
+        {
+          "date": "2026-10-14",
+          "dau": 0,
+          "newUsers": 0,
+          "sessions": 0,
+          "engagementSec": 0,
+          "revenue": 0,
+          "adRevenue": 0
+        },
+        {
+          "date": "2026-10-15",
+          "dau": 0,
+          "newUsers": 0,
+          "sessions": 0,
+          "engagementSec": 0,
+          "revenue": 0,
+          "adRevenue": 0
+        },
+        {
+          "date": "2026-10-16",
+          "dau": 0,
+          "newUsers": 0,
+          "sessions": 0,
+          "engagementSec": 0,
+          "revenue": 0,
+          "adRevenue": 0
+        },
+        {
+          "date": "2026-10-17",
+          "dau": 0,
+          "newUsers": 0,
+          "sessions": 0,
+          "engagementSec": 0,
+          "revenue": 0,
+          "adRevenue": 0
+        },
+        {
+          "date": "2026-10-18",
+          "dau": 0,
+          "newUsers": 0,
+          "sessions": 0,
+          "engagementSec": 0,
+          "revenue": 0,
+          "adRevenue": 0
+        },
+        {
+          "date": "2026-10-19",
+          "dau": 0,
+          "newUsers": 0,
+          "sessions": 0,
+          "engagementSec": 0,
+          "revenue": 0,
+          "adRevenue": 0
+        },
+        {
+          "date": "2026-10-20",
+          "dau": 0,
+          "newUsers": 0,
+          "sessions": 0,
+          "engagementSec": 0,
+          "revenue": 0,
+          "adRevenue": 0
+        },
+        {
+          "date": "2026-10-21",
+          "dau": 4,
+          "newUsers": 4,
+          "sessions": 4,
+          "engagementSec": 0,
+          "revenue": 0,
+          "adRevenue": 0
+        },
+        {
+          "date": "2026-10-22",
+          "dau": 1,
+          "newUsers": 1,
+          "sessions": 2,
+          "engagementSec": 466,
+          "revenue": 0,
+          "adRevenue": 0
+        },
+        {
+          "date": "2026-10-23",
+          "dau": 13,
+          "newUsers": 12,
+          "sessions": 18,
+          "engagementSec": 5499,
+          "revenue": 0.01,
+          "adRevenue": 0.01
+        },
+        {
+          "date": "2026-10-24",
+          "dau": 89,
+          "newUsers": 84,
+          "sessions": 101,
+          "engagementSec": 22258,
+          "revenue": 0.07,
+          "adRevenue": 0.07
+        },
+        {
+          "date": "2026-10-25",
+          "dau": 282,
+          "newUsers": 263,
+          "sessions": 388,
+          "engagementSec": 82370,
+          "revenue": 0.38,
+          "adRevenue": 0.38
+        },
+        {
+          "date": "2026-10-26",
+          "dau": 325,
+          "newUsers": 273,
+          "sessions": 458,
+          "engagementSec": 122563,
+          "revenue": 0.25,
+          "adRevenue": 0.25
+        },
+        {
+          "date": "2026-10-27",
+          "dau": 368,
+          "newUsers": 290,
+          "sessions": 541,
+          "engagementSec": 124913,
+          "revenue": 0.29,
+          "adRevenue": 0.29
+        },
+        {
+          "date": "2026-10-28",
+          "dau": 472,
+          "newUsers": 368,
+          "sessions": 678,
+          "engagementSec": 157125,
+          "revenue": 0.34,
+          "adRevenue": 0.34
+        },
+        {
+          "date": "2026-10-29",
+          "dau": 466,
+          "newUsers": 348,
+          "sessions": 709,
+          "engagementSec": 197432,
+          "revenue": 0.49,
+          "adRevenue": 0.49
+        },
+        {
+          "date": "2026-10-30",
+          "dau": 513,
+          "newUsers": 354,
+          "sessions": 780,
+          "engagementSec": 231476,
+          "revenue": 0.32,
+          "adRevenue": 0.32
+        }
+      ],
+      "summary": {
+        "last7": {
+          "days": 7,
+          "dauAvg": 359.3,
+          "newUsers": 1980,
+          "sessions": 3655,
+          "sessionsPerDau": 1.45,
+          "engagementMinPerDau": 6.2,
+          "revenue": 2.14,
+          "adRevenue": 2.14
+        },
+        "prev7": {
+          "days": 7,
+          "dauAvg": 2.6,
+          "newUsers": 17,
+          "sessions": 24,
+          "sessionsPerDau": 1.33,
+          "engagementMinPerDau": 5.5,
+          "revenue": 0.01,
+          "adRevenue": 0.01
+        },
+        "yesterday": {
+          "date": "2026-10-30",
+          "dau": 513,
+          "newUsers": 354,
+          "sessions": 780,
+          "engagementSec": 231476,
+          "revenue": 0.32,
+          "adRevenue": 0.32
+        }
+      },
+      "retention": {
+        "cohorts": [
+          {
+            "date": "2026-10-21",
+            "users": 4,
+            "d1": 0,
+            "d7": 0
+          },
+          {
+            "date": "2026-10-22",
+            "users": 1,
+            "d1": 1,
+            "d7": 0
+          },
+          {
+            "date": "2026-10-23",
+            "users": 12,
+            "d1": 0.4167,
+            "d7": 0.0833
+          },
+          {
+            "date": "2026-10-24",
+            "users": 84,
+            "d1": 0.2262,
+            "d7": null
+          },
+          {
+            "date": "2026-10-25",
+            "users": 263,
+            "d1": 0.1673,
+            "d7": null
+          },
+          {
+            "date": "2026-10-26",
+            "users": 272,
+            "d1": 0.1618,
+            "d7": null
+          },
+          {
+            "date": "2026-10-27",
+            "users": 289,
+            "d1": 0.1696,
+            "d7": null
+          },
+          {
+            "date": "2026-10-28",
+            "users": 367,
+            "d1": 0.1553,
+            "d7": null
+          },
+          {
+            "date": "2026-10-29",
+            "users": 348,
+            "d1": 0.204,
+            "d7": null
+          }
+        ],
+        "d1": 0.175,
+        "d7": null
+      },
+      "events": [
+        {
+          "name": "battle",
+          "count7": 33927,
+          "prev7": 232,
+          "users7": 1009
+        },
+        {
+          "name": "engagement",
+          "count7": 6965,
+          "prev7": 39,
+          "users7": 1653
+        },
+        {
+          "name": "level_start",
+          "count7": 6550,
+          "prev7": 41,
+          "users7": 1810
+        },
+        {
+          "name": "ftue",
+          "count7": 6305,
+          "prev7": 30,
+          "users7": 1807
+        },
+        {
+          "name": "screen_view",
+          "count7": 5340,
+          "prev7": 38,
+          "users7": 1929
+        },
+        {
+          "name": "user_engagement",
+          "count7": 5081,
+          "prev7": 26,
+          "users7": 1818
+        },
+        {
+          "name": "level_end",
+          "count7": 4201,
+          "prev7": 29,
+          "users7": 1007
+        },
+        {
+          "name": "adoffer",
+          "count7": 4171,
+          "prev7": 36,
+          "users7": 662
+        },
+        {
+          "name": "ad_impression",
+          "count7": 3618,
+          "prev7": 31,
+          "users7": 954
+        },
+        {
+          "name": "ad_show",
+          "count7": 3446,
+          "prev7": 28,
+          "users7": 958
+        },
+        {
+          "name": "session_start",
+          "count7": 3440,
+          "prev7": 24,
+          "users7": 1976
+        },
+        {
+          "name": "earn_virtual_currency",
+          "count7": 2553,
+          "prev7": 21,
+          "users7": 531
+        },
+        {
+          "name": "first_open",
+          "count7": 1980,
+          "prev7": 17,
+          "users7": 1976
+        },
+        {
+          "name": "app_remove",
+          "count7": 868,
+          "prev7": 2,
+          "users7": 866
+        },
+        {
+          "name": "ad_click",
+          "count7": 409,
+          "prev7": 3,
+          "users7": 279
+        },
+        {
+          "name": "ad_clicked",
+          "count7": 338,
+          "prev7": 1,
+          "users7": 168
+        },
+        {
+          "name": "ad_reward",
+          "count7": 22,
+          "prev7": 0,
+          "users7": 18
+        },
+        {
+          "name": "ad_rewardreceived",
+          "count7": 15,
+          "prev7": 0,
+          "users7": 12
+        },
+        {
+          "name": "app_exception",
+          "count7": 6,
+          "prev7": 0,
+          "users7": 6
+        },
+        {
+          "name": "ad_failedshow",
+          "count7": 2,
+          "prev7": 0,
+          "users7": 2
+        },
+        {
+          "name": "app_clear_data",
+          "count7": 1,
+          "prev7": 1,
+          "users7": 1
+        }
+      ],
+      "versions": [
+        {
+          "name": "1.1.0",
+          "users": 1984
+        }
+      ],
+      "countries": [
+        {
+          "name": "India",
+          "users": 275
+        },
+        {
+          "name": "Iran",
+          "users": 196
+        },
+        {
+          "name": "Myanmar (Burma)",
+          "users": 135
+        },
+        {
+          "name": "Iraq",
+          "users": 133
+        },
+        {
+          "name": "Pakistan",
+          "users": 97
+        },
+        {
+          "name": "Algeria",
+          "users": 92
+        },
+        {
+          "name": "Bangladesh",
+          "users": 83
+        },
+        {
+          "name": "Egypt",
+          "users": 73
+        },
+        {
+          "name": "Venezuela",
+          "users": 59
+        },
+        {
+          "name": "Morocco",
+          "users": 57
+        }
+      ],
+      "platforms": [
+        {
+          "name": "Android",
+          "users": 1984
+        }
+      ]
+    },
+    {
+      "id": "jelly-kitchen",
+      "name": "Grandma's Jelly Kitchen",
+      "propertyId": "560948377",
+      "currency": "USD",
+      "ok": true,
+      "warnings": [],
+      "daily": [
+        {
+          "date": "2026-10-01",
+          "dau": 0,
+          "newUsers": 0,
+          "sessions": 0,
+          "engagementSec": 0,
+          "revenue": 0,
+          "adRevenue": 0
+        },
+        {
+          "date": "2026-10-02",
+          "dau": 0,
+          "newUsers": 0,
+          "sessions": 0,
+          "engagementSec": 0,
+          "revenue": 0,
+          "adRevenue": 0
+        },
+        {
+          "date": "2026-10-03",
+          "dau": 0,
+          "newUsers": 0,
+          "sessions": 0,
+          "engagementSec": 0,
+          "revenue": 0,
+          "adRevenue": 0
+        },
+        {
+          "date": "2026-10-04",
+          "dau": 0,
+          "newUsers": 0,
+          "sessions": 0,
+          "engagementSec": 0,
+          "revenue": 0,
+          "adRevenue": 0
+        },
+        {
+          "date": "2026-10-05",
+          "dau": 0,
+          "newUsers": 0,
+          "sessions": 0,
+          "engagementSec": 0,
+          "revenue": 0,
+          "adRevenue": 0
+        },
+        {
+          "date": "2026-10-06",
+          "dau": 0,
+          "newUsers": 0,
+          "sessions": 0,
+          "engagementSec": 0,
+          "revenue": 0,
+          "adRevenue": 0
+        },
+        {
+          "date": "2026-10-07",
+          "dau": 0,
+          "newUsers": 0,
+          "sessions": 0,
+          "engagementSec": 0,
+          "revenue": 0,
+          "adRevenue": 0
+        },
+        {
+          "date": "2026-10-08",
+          "dau": 0,
+          "newUsers": 0,
+          "sessions": 0,
+          "engagementSec": 0,
+          "revenue": 0,
+          "adRevenue": 0
+        },
+        {
+          "date": "2026-10-09",
+          "dau": 0,
+          "newUsers": 0,
+          "sessions": 0,
+          "engagementSec": 0,
+          "revenue": 0,
+          "adRevenue": 0
+        },
+        {
+          "date": "2026-10-10",
+          "dau": 0,
+          "newUsers": 0,
+          "sessions": 0,
+          "engagementSec": 0,
+          "revenue": 0,
+          "adRevenue": 0
+        },
+        {
+          "date": "2026-10-11",
+          "dau": 0,
+          "newUsers": 0,
+          "sessions": 0,
+          "engagementSec": 0,
+          "revenue": 0,
+          "adRevenue": 0
+        },
+        {
+          "date": "2026-10-12",
+          "dau": 0,
+          "newUsers": 0,
+          "sessions": 0,
+          "engagementSec": 0,
+          "revenue": 0,
+          "adRevenue": 0
+        },
+        {
+          "date": "2026-10-13",
+          "dau": 0,
+          "newUsers": 0,
+          "sessions": 0,
+          "engagementSec": 0,
+          "revenue": 0,
+          "adRevenue": 0
+        },
+        {
+          "date": "2026-10-14",
+          "dau": 0,
+          "newUsers": 0,
+          "sessions": 0,
+          "engagementSec": 0,
+          "revenue": 0,
+          "adRevenue": 0
+        },
+        {
+          "date": "2026-10-15",
+          "dau": 0,
+          "newUsers": 0,
+          "sessions": 0,
+          "engagementSec": 0,
+          "revenue": 0,
+          "adRevenue": 0
+        },
+        {
+          "date": "2026-10-16",
+          "dau": 0,
+          "newUsers": 0,
+          "sessions": 0,
+          "engagementSec": 0,
+          "revenue": 0,
+          "adRevenue": 0
+        },
+        {
+          "date": "2026-10-17",
+          "dau": 0,
+          "newUsers": 0,
+          "sessions": 0,
+          "engagementSec": 0,
+          "revenue": 0,
+          "adRevenue": 0
+        },
+        {
+          "date": "2026-10-18",
+          "dau": 0,
+          "newUsers": 0,
+          "sessions": 0,
+          "engagementSec": 0,
+          "revenue": 0,
+          "adRevenue": 0
+        },
+        {
+          "date": "2026-10-19",
+          "dau": 0,
+          "newUsers": 0,
+          "sessions": 0,
+          "engagementSec": 0,
+          "revenue": 0,
+          "adRevenue": 0
+        },
+        {
+          "date": "2026-10-20",
+          "dau": 0,
+          "newUsers": 0,
+          "sessions": 0,
+          "engagementSec": 0,
+          "revenue": 0,
+          "adRevenue": 0
+        },
+        {
+          "date": "2026-10-21",
+          "dau": 0,
+          "newUsers": 0,
+          "sessions": 0,
+          "engagementSec": 0,
+          "revenue": 0,
+          "adRevenue": 0
+        },
+        {
+          "date": "2026-10-22",
+          "dau": 0,
+          "newUsers": 0,
+          "sessions": 0,
+          "engagementSec": 0,
+          "revenue": 0,
+          "adRevenue": 0
+        },
+        {
+          "date": "2026-10-23",
+          "dau": 0,
+          "newUsers": 0,
+          "sessions": 0,
+          "engagementSec": 0,
+          "revenue": 0,
+          "adRevenue": 0
+        },
+        {
+          "date": "2026-10-24",
+          "dau": 0,
+          "newUsers": 0,
+          "sessions": 0,
+          "engagementSec": 0,
+          "revenue": 0,
+          "adRevenue": 0
+        },
+        {
+          "date": "2026-10-25",
+          "dau": 0,
+          "newUsers": 0,
+          "sessions": 0,
+          "engagementSec": 0,
+          "revenue": 0,
+          "adRevenue": 0
+        },
+        {
+          "date": "2026-10-26",
+          "dau": 0,
+          "newUsers": 0,
+          "sessions": 0,
+          "engagementSec": 0,
+          "revenue": 0,
+          "adRevenue": 0
+        },
+        {
+          "date": "2026-10-27",
+          "dau": 0,
+          "newUsers": 0,
+          "sessions": 0,
+          "engagementSec": 0,
+          "revenue": 0,
+          "adRevenue": 0
+        },
+        {
+          "date": "2026-10-28",
+          "dau": 1,
+          "newUsers": 1,
+          "sessions": 2,
+          "engagementSec": 306,
+          "revenue": 0,
+          "adRevenue": 0
+        },
+        {
+          "date": "2026-10-29",
+          "dau": 16,
+          "newUsers": 15,
+          "sessions": 16,
+          "engagementSec": 3286,
+          "revenue": 0,
+          "adRevenue": 0
+        },
+        {
+          "date": "2026-10-30",
+          "dau": 103,
+          "newUsers": 102,
+          "sessions": 129,
+          "engagementSec": 20075,
+          "revenue": 0,
+          "adRevenue": 0
+        }
+      ],
+      "summary": {
+        "last7": {
+          "days": 7,
+          "dauAvg": 17.1,
+          "newUsers": 118,
+          "sessions": 147,
+          "sessionsPerDau": 1.23,
+          "engagementMinPerDau": 3.3,
+          "revenue": 0,
+          "adRevenue": 0
+        },
+        "prev7": {
+          "days": 7,
+          "dauAvg": 0,
+          "newUsers": 0,
+          "sessions": 0,
+          "sessionsPerDau": null,
+          "engagementMinPerDau": null,
+          "revenue": 0,
+          "adRevenue": 0
+        },
+        "yesterday": {
+          "date": "2026-10-30",
+          "dau": 103,
+          "newUsers": 102,
+          "sessions": 129,
+          "engagementSec": 20075,
+          "revenue": 0,
+          "adRevenue": 0
+        }
+      },
+      "retention": {
+        "cohorts": [
+          {
+            "date": "2026-10-28",
+            "users": 1,
+            "d1": 1,
+            "d7": null
+          },
+          {
+            "date": "2026-10-29",
+            "users": 15,
+            "d1": 0.0667,
+            "d7": null
+          }
+        ],
+        "d1": null,
+        "d7": null
+      },
+      "events": [
+        {
+          "name": "user_engagement",
+          "count7": 214,
+          "prev7": 0,
+          "users7": 109
+        },
+        {
+          "name": "screen_view",
+          "count7": 168,
+          "prev7": 0,
+          "users7": 118
+        },
+        {
+          "name": "session_start",
+          "count7": 145,
+          "prev7": 0,
+          "users7": 118
+        },
+        {
+          "name": "first_open",
+          "count7": 118,
+          "prev7": 0,
+          "users7": 118
+        },
+        {
+          "name": "app_remove",
+          "count7": 39,
+          "prev7": 0,
+          "users7": 39
+        },
+        {
+          "name": "ad_reward",
+          "count7": 2,
+          "prev7": 0,
+          "users7": 1
+        },
+        {
+          "name": "ad_impression",
+          "count7": 1,
+          "prev7": 0,
+          "users7": 1
+        }
+      ],
+      "versions": [
+        {
+          "name": "2",
+          "users": 118
+        }
+      ],
+      "countries": [
+        {
+          "name": "India",
+          "users": 17
+        },
+        {
+          "name": "Iraq",
+          "users": 13
+        },
+        {
+          "name": "Pakistan",
+          "users": 12
+        },
+        {
+          "name": "Bangladesh",
+          "users": 6
+        },
+        {
+          "name": "Libya",
+          "users": 6
+        },
+        {
+          "name": "Egypt",
+          "users": 5
+        },
+        {
+          "name": "Honduras",
+          "users": 4
+        },
+        {
+          "name": "United States",
+          "users": 4
+        },
+        {
+          "name": "Venezuela",
+          "users": 4
+        },
+        {
+          "name": "(not set)",
+          "users": 3
+        }
+      ],
+      "platforms": [
+        {
+          "name": "Android",
+          "users": 118
+        }
+      ]
+    }
+  ]
+}

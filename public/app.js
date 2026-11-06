@@ -13,18 +13,22 @@
     set: (k, v) => { try { localStorage.setItem(k, v); } catch {} },
   };
 
-  let metrics;
+  const getJson = async (path) => {
+    const res = await fetch(path, { cache: 'no-store' });
+    if (!res.ok) throw new Error(`${path}: HTTP ${res.status}`);
+    return res.json();
+  };
+
+  // `latest` is the newest data; `metrics` is whatever day is on screen (latest or a saved past day).
+  let latest, metrics, games = [], okGames = [];
   try {
-    const res = await fetch('data/metrics.json', { cache: 'no-store' });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    metrics = await res.json();
+    latest = metrics = await getJson('data/metrics.json');
   } catch (e) {
     $('#meta').textContent = `Could not load data (${e.message}).`;
     return;
   }
-
-  const games = metrics.games;
-  const okGames = games.filter((g) => g.ok);
+  // Saved days (newest first). Missing on old deployments, which just hides the date menu.
+  const savedDays = await getJson('data/history/index.json').then((x) => x.days ?? []).catch(() => []);
   const COMPARE = '__all';
   const HINT = 'Click a line, bar or legend square to hide it. Click the legend again to show it.';
 
@@ -46,9 +50,10 @@
   const changeText = (ch) => (ch == null ? 'new' : `${ch >= 0 ? '+' : ''}${(ch * 100).toFixed(Math.abs(ch) < 0.1 ? 1 : 0)}%`);
 
   // A game that barely existed the week before (launch week) gets no week-over-week %, which would be huge and meaningless.
-  const isNewGame = (g) => !(g.summary?.prev7?.dauAvg >= 5);
+  // Same for a prior week that includes days before launch (any day with no players).
+  const isNewGame = (g) => !(g.summary?.prev7?.dauAvg >= 5) || (g.daily ?? []).slice(-14, -7).some((d) => d.dau === 0);
   function delta(cur, prev, game) {
-    if (game && isNewGame(game)) return '<span class="delta flat">launched this week</span>';
+    if (game && isNewGame(game)) return '<span class="delta flat">launched recently</span>';
     if (cur == null || prev == null || prev === 0) return '<span class="delta flat">no prior week</span>';
     const ch = (cur - prev) / prev;
     const cls = Math.abs(ch) < 0.005 ? 'flat' : ch > 0 ? 'up' : 'down';
@@ -65,21 +70,60 @@
   const sessionsPer = (d) => (d.dau ? d.sessions / d.dau : null);
   const inApp = (d) => Math.round(Math.max(0, d.revenue - d.adRevenue) * 100) / 100;
 
-  // ---------- header + game menu ----------
-  const updated = new Date(metrics.generatedAt).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
-  $('#meta').textContent = `Data through ${shortDate(metrics.periodEnd)} · updated ${updated}`;
-  $('#demo-banner').hidden = !metrics.demo;
-
+  // ---------- header, game menu, date menu ----------
   const select = $('#game-select');
-  select.innerHTML =
-    games.map((g) => `<option value="${esc(g.id)}">${esc(g.name)}</option>`).join('') +
-    (games.length > 1 ? `<option value="${COMPARE}">All games (compare)</option>` : '');
-  const saved = store.get('dash-game');
-  select.value = [...select.options].some((o) => o.value === saved) ? saved : games[0]?.id;
+  const dateSelect = $('#date-select');
+  const longDate = (iso) =>
+    new Date(iso + 'T00:00:00Z').toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+
+  /** Points the page at `metrics`: header, banners and the game menu (keeping the chosen game). */
+  function applyMetrics() {
+    games = metrics.games;
+    okGames = games.filter((g) => g.ok);
+    const isLatest = metrics.periodEnd === latest.periodEnd;
+    const updated = new Date(latest.generatedAt).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
+    $('#meta').textContent = isLatest
+      ? `Data through ${shortDate(metrics.periodEnd)} · updated ${updated}`
+      : `Viewing a past day: ${longDate(metrics.periodEnd)}`;
+    $('#demo-banner').hidden = !metrics.demo;
+    $('#past-banner').hidden = isLatest;
+    $('#past-day').textContent = longDate(metrics.periodEnd);
+
+    const want = select.value || store.get('dash-game');
+    select.innerHTML =
+      games.map((g) => `<option value="${esc(g.id)}">${esc(g.name)}</option>`).join('') +
+      (games.length > 1 ? `<option value="${COMPARE}">All games (compare)</option>` : '');
+    select.value = [...select.options].some((o) => o.value === want) ? want : games[0]?.id;
+  }
+
   select.addEventListener('change', () => {
     store.set('dash-game', select.value);
     render();
   });
+
+  // Date menu: the newest day first, then every saved day before it.
+  const days = [...new Set([latest.periodEnd, ...savedDays])].sort().reverse();
+  if (days.length > 1) {
+    dateSelect.innerHTML = days
+      .map((d) => `<option value="${d}">${esc(longDate(d))}${d === latest.periodEnd ? ' (latest)' : ''}</option>`)
+      .join('');
+    dateSelect.value = latest.periodEnd;
+    $('#date-picker').hidden = false;
+  }
+  async function showDay(day) {
+    dateSelect.value = day;
+    try {
+      metrics = day === latest.periodEnd ? latest : await getJson(`data/history/${day}.json`);
+    } catch (e) {
+      $('#meta').textContent = `Could not load ${day} (${e.message}).`;
+      return;
+    }
+    applyMetrics();
+    render();
+  }
+  dateSelect.addEventListener('change', () => showDay(dateSelect.value));
+  $('#back-to-latest').addEventListener('click', () => showDay(latest.periodEnd));
+  applyMetrics();
 
   // ---------- charts: shared look + click to hide ----------
   let charts = [];

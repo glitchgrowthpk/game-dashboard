@@ -108,7 +108,12 @@ th { color: var(--muted); font-weight: 600; }
 .warn-list { font-size: 13px; color: var(--ink-2); }
 .hidden { display: none !important; }
 
-/* game menu */
+/* game + day menus */
+.pickers { display: flex; flex-wrap: wrap; gap: 8px 16px; }
+.picker[hidden] { display: none; }
+#date-picker select { min-width: 200px; }
+.banner.past { display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: center; justify-content: space-between; }
+.banner.past[hidden] { display: none; }
 .picker { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); }
 .picker select {
   font: inherit; font-size: 15px; font-weight: 600; color: var(--ink); background: var(--surface);

@@ -15,14 +15,24 @@
         <h1>Games Dashboard</h1>
         <p class="meta" id="meta">Loading…</p>
       </div>
-      <label class="picker">
-        <span>Game</span>
-        <select id="game-select" aria-label="Choose a game"></select>
-      </label>
+      <div class="pickers">
+        <label class="picker">
+          <span>Game</span>
+          <select id="game-select" aria-label="Choose a game"></select>
+        </label>
+        <label class="picker" id="date-picker" hidden>
+          <span>Day</span>
+          <select id="date-select" aria-label="Choose a day"></select>
+        </label>
+      </div>
     </header>
 
     <div class="banner" id="demo-banner" hidden>
       Demo data. The real numbers appear after the first daily run.
+    </div>
+    <div class="banner past" id="past-banner" hidden>
+      <span>You're looking at <strong id="past-day"></strong>. Every number covers the days up to and including that day.</span>
+      <button type="button" class="link" id="back-to-latest">Back to latest</button>
     </div>
 
     <div id="view"></div>

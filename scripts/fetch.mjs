@@ -1,14 +1,21 @@
-// Pulls the last 30 days of Firebase Analytics (GA4) data for every game in games.json
-// and writes public/data/metrics.json. All numbers the dashboard and Claude use are computed here,
-// so the figures are exact and identical in both places.
+// Pulls Firebase Analytics (GA4) data for every game in games.json, as of one day, and saves it.
 //
-// Env: GA_SA_KEY (service-account JSON, raw or base64).
+//   node scripts/fetch.mjs                      as of yesterday: writes public/data/metrics.json
+//                                               and the snapshot public/data/history/<yesterday>.json
+//   node scripts/fetch.mjs --end 2026-11-01     snapshot as of that day only
+//   node scripts/fetch.mjs --backfill 2026-10-21  one snapshot per day from that date to yesterday
+//
+// Every snapshot holds the 30 days ending on its day, the 7-day comparison, retention, events and
+// breakdowns as they looked on that day. public/data/history/index.json lists the saved days.
+//
+// Env: GA_SA_KEY (service-account JSON, raw or base64) or GA_SA_KEY_FILE / service-account.json.
 import { join } from 'node:path';
 import { BetaAnalyticsDataClient } from '@google-analytics/data';
-import { DATA_DIR, loadGames, writeJson, isoDay, gaDateToIso, serviceAccountFromEnv } from './lib.mjs';
+import { DATA_DIR, loadGames, readJson, writeJson, isoDay, addDays, gaDateToIso, serviceAccountFromEnv } from './lib.mjs';
 
-const DAYS = 30; // daily series length; GA4 keeps far more, this keeps the page light
-const RETENTION_COHORTS = 14; // one cohort per install day, the most recent 14 complete-ish days
+const DAYS = 30; // daily series length per snapshot
+const RETENTION_COHORTS = 14; // one cohort per install day, the 14 days before the snapshot day
+const HISTORY_DIR = join(DATA_DIR, 'history');
 
 const num = (v) => (v == null || v === '' ? 0 : Number(v));
 const round = (v, d = 2) => (Number.isFinite(v) ? Math.round(v * 10 ** d) / 10 ** d : null);
@@ -26,32 +33,28 @@ async function report(client, propertyId, request) {
   });
 }
 
-async function fetchDaily(client, pid, start, end) {
+async function fetchDaily(client, pid, end) {
+  const range = [{ startDate: addDays(end, -(DAYS - 1)), endDate: end }];
   const core = await report(client, pid, {
-    dateRanges: [{ startDate: start, endDate: end }],
+    dateRanges: range,
     dimensions: [{ name: 'date' }],
-    metrics: [
-      { name: 'activeUsers' },
-      { name: 'newUsers' },
-      { name: 'sessions' },
-      { name: 'userEngagementDuration' },
-    ],
+    metrics: [{ name: 'activeUsers' }, { name: 'newUsers' }, { name: 'sessions' }, { name: 'userEngagementDuration' }],
     limit: 1000,
   });
 
   // Revenue is a separate call: totalAdRevenue only exists when AdMob is linked, and an
   // unsupported metric would otherwise fail the whole report.
-  let revenue = [];
+  let revenue;
   try {
     revenue = await report(client, pid, {
-      dateRanges: [{ startDate: start, endDate: end }],
+      dateRanges: range,
       dimensions: [{ name: 'date' }],
       metrics: [{ name: 'totalRevenue' }, { name: 'totalAdRevenue' }],
       limit: 1000,
     });
   } catch {
     revenue = await report(client, pid, {
-      dateRanges: [{ startDate: start, endDate: end }],
+      dateRanges: range,
       dimensions: [{ name: 'date' }],
       metrics: [{ name: 'totalRevenue' }],
       limit: 1000,
@@ -64,8 +67,8 @@ async function fetchDaily(client, pid, start, end) {
 
   // One entry per calendar day, zero-filled, oldest first.
   const days = [];
-  for (let i = DAYS; i >= 1; i--) {
-    const date = isoDay(i);
+  for (let i = DAYS - 1; i >= 0; i--) {
+    const date = addDays(end, -i);
     const r = byDate.get(date) ?? {};
     days.push({
       date,
@@ -98,11 +101,11 @@ export function summarize(days) {
   return { last7: win(days.slice(-7)), prev7: win(days.slice(-14, -7)), yesterday: days.at(-1) };
 }
 
-async function fetchEvents(client, pid) {
+async function fetchEvents(client, pid, end) {
   const rows = await report(client, pid, {
     dateRanges: [
-      { startDate: '7daysAgo', endDate: 'yesterday', name: 'cur' },
-      { startDate: '14daysAgo', endDate: '8daysAgo', name: 'prev' },
+      { startDate: addDays(end, -6), endDate: end, name: 'cur' },
+      { startDate: addDays(end, -13), endDate: addDays(end, -7), name: 'prev' },
     ],
     dimensions: [{ name: 'eventName' }],
     metrics: [{ name: 'eventCount' }, { name: 'totalUsers' }],
@@ -126,9 +129,9 @@ async function fetchEvents(client, pid) {
     .slice(0, 40);
 }
 
-async function fetchBreakdown(client, pid, dimension, limit) {
+async function fetchBreakdown(client, pid, dimension, limit, end) {
   const rows = await report(client, pid, {
-    dateRanges: [{ startDate: '7daysAgo', endDate: 'yesterday' }],
+    dateRanges: [{ startDate: addDays(end, -6), endDate: end }],
     dimensions: [{ name: dimension }],
     metrics: [{ name: 'activeUsers' }],
     orderBys: [{ metric: { metricName: 'activeUsers' }, desc: true }],
@@ -139,12 +142,12 @@ async function fetchBreakdown(client, pid, dimension, limit) {
 
 /**
  * Day-1 and day-7 retention from daily install cohorts. A cohort only counts toward D-n once
- * day n has fully passed (yesterday or earlier), so recent cohorts don't drag the average down.
+ * day n has passed by the snapshot day, so recent cohorts don't drag the average down.
  */
-async function fetchRetention(client, pid) {
+async function fetchRetention(client, pid, end) {
   const cohorts = [];
-  for (let i = RETENTION_COHORTS + 1; i >= 2; i--) {
-    const d = isoDay(i);
+  for (let i = RETENTION_COHORTS; i >= 1; i--) {
+    const d = addDays(end, -i);
     cohorts.push({ name: d, dimension: 'firstSessionDate', dateRange: { startDate: d, endDate: d } });
   }
   const rows = await report(client, pid, {
@@ -153,7 +156,7 @@ async function fetchRetention(client, pid) {
     cohortSpec: { cohorts, cohortsRange: { granularity: 'DAILY', startOffset: 0, endOffset: 7 } },
     limit: 1000,
   });
-  return retentionFromRows(rows, isoDay(1));
+  return retentionFromRows(rows, end);
 }
 
 export function retentionFromRows(rows, lastCompleteDay) {
@@ -164,11 +167,6 @@ export function retentionFromRows(rows, lastCompleteDay) {
     c.active[Number(r.cohortNthDay)] = r.cohortActiveUsers;
     by.set(r.cohort, c);
   }
-  const addDays = (iso, n) => {
-    const d = new Date(iso + 'T00:00:00Z');
-    d.setUTCDate(d.getUTCDate() + n);
-    return d.toISOString().slice(0, 10);
-  };
   const out = [...by.values()]
     .sort((a, b) => a.date.localeCompare(b.date))
     .map((c) => {
@@ -186,10 +184,10 @@ export function retentionFromRows(rows, lastCompleteDay) {
   return { cohorts: out, d1: weighted('d1'), d7: weighted('d7') };
 }
 
-async function fetchGame(client, game) {
+async function fetchGame(client, game, end) {
   const pid = game.ga4PropertyId;
   const out = { id: game.id, name: game.name, propertyId: pid, currency: game.currency ?? 'USD', ok: true, warnings: [] };
-  const daily = await fetchDaily(client, pid, isoDay(DAYS), isoDay(1));
+  const daily = await fetchDaily(client, pid, end);
   out.daily = daily;
   out.summary = summarize(daily);
 
@@ -202,42 +200,76 @@ async function fetchGame(client, game) {
       out.warnings.push(`${key}: ${e.message}`);
     }
   };
-  await optional('retention', () => fetchRetention(client, pid));
-  await optional('events', () => fetchEvents(client, pid));
-  await optional('versions', () => fetchBreakdown(client, pid, 'appVersion', 8));
-  await optional('countries', () => fetchBreakdown(client, pid, 'country', 10));
-  await optional('platforms', () => fetchBreakdown(client, pid, 'platform', 4));
+  await optional('retention', () => fetchRetention(client, pid, end));
+  await optional('events', () => fetchEvents(client, pid, end));
+  await optional('versions', () => fetchBreakdown(client, pid, 'appVersion', 8, end));
+  await optional('countries', () => fetchBreakdown(client, pid, 'country', 10, end));
+  await optional('platforms', () => fetchBreakdown(client, pid, 'platform', 4, end));
   return out;
 }
 
+async function snapshot(client, games, end) {
+  const results = [];
+  for (const game of games) {
+    try {
+      results.push(await fetchGame(client, game, end));
+    } catch (e) {
+      console.error(`✗ ${end} ${game.name}: ${e.message}`);
+      results.push({ id: game.id, name: game.name, propertyId: game.ga4PropertyId, ok: false, error: e.message });
+    }
+  }
+  return { generatedAt: new Date().toISOString(), periodEnd: end, demo: false, games: results };
+}
+
+/** Saves a snapshot under history/ and refreshes history/index.json (newest first). */
+function saveHistory(metrics) {
+  writeJson(join(HISTORY_DIR, `${metrics.periodEnd}.json`), metrics);
+  const index = readJson(join(HISTORY_DIR, 'index.json'), { days: [] });
+  const days = new Set(index.days);
+  days.add(metrics.periodEnd);
+  writeJson(join(HISTORY_DIR, 'index.json'), { days: [...days].sort().reverse() });
+}
+
+function parseArgs(argv) {
+  const opts = {};
+  for (let i = 0; i < argv.length; i++) {
+    if (argv[i] === '--end') opts.end = argv[++i];
+    else if (argv[i] === '--backfill') opts.backfill = argv[++i];
+  }
+  const isDate = (s) => /^\d{4}-\d{2}-\d{2}$/.test(s ?? '');
+  if (opts.end && !isDate(opts.end)) throw new Error('--end needs a date like 2026-11-01');
+  if (opts.backfill && !isDate(opts.backfill)) throw new Error('--backfill needs a date like 2026-10-21');
+  return opts;
+}
+
 async function main() {
+  const opts = parseArgs(process.argv.slice(2));
   const key = serviceAccountFromEnv();
   const client = new BetaAnalyticsDataClient({
     credentials: { client_email: key.client_email, private_key: key.private_key },
   });
   const games = loadGames();
-  const results = [];
-  for (const game of games) {
-    try {
-      results.push(await fetchGame(client, game));
-      console.log(`✓ ${game.name}`);
-    } catch (e) {
-      console.error(`✗ ${game.name}: ${e.message}`);
-      results.push({ id: game.id, name: game.name, propertyId: game.ga4PropertyId, ok: false, error: e.message });
-    }
+  const latest = isoDay(1);
+
+  // Which days to save: one (default yesterday, or --end), or every day from --backfill to yesterday.
+  const ends = [];
+  if (opts.backfill) for (let d = opts.backfill; d <= latest; d = addDays(d, 1)) ends.push(d);
+  else ends.push(opts.end ?? latest);
+
+  let ok = 0;
+  for (const end of ends) {
+    const metrics = await snapshot(client, games, end);
+    saveHistory(metrics);
+    // The page opens on metrics.json, so keep it on the newest day.
+    if (end === latest) writeJson(join(DATA_DIR, 'metrics.json'), metrics);
+    const good = metrics.games.filter((g) => g.ok).length;
+    if (good) ok++;
+    console.log(`✓ ${end}: ${good}/${metrics.games.length} games`);
   }
-  const metrics = {
-    generatedAt: new Date().toISOString(),
-    periodEnd: isoDay(1),
-    demo: false,
-    games: results,
-  };
-  writeJson(join(DATA_DIR, 'metrics.json'), metrics);
-  console.log(`Wrote public/data/metrics.json (${results.filter((g) => g.ok).length}/${results.length} games ok)`);
-  if (!results.some((g) => g.ok)) process.exit(1);
+  if (!ok) process.exit(1);
 }
 
-// Run only when executed directly (demo.mjs imports summarize/retentionFromRows from here).
+// Run only when executed directly (demo.mjs imports summarize from here).
 if (process.argv[1]?.endsWith('fetch.mjs')) {
   main().catch((e) => {
     console.error(e.message);

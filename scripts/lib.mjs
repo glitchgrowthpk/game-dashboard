@@ -30,6 +30,13 @@ export function isoDay(daysAgo = 0, from = new Date()) {
   return d.toISOString().slice(0, 10);
 }
 
+/** YYYY-MM-DD plus n days (n may be negative). */
+export function addDays(iso, n) {
+  const d = new Date(iso + 'T00:00:00Z');
+  d.setUTCDate(d.getUTCDate() + n);
+  return d.toISOString().slice(0, 10);
+}
+
 /** GA4 dates come back as YYYYMMDD. */
 export function gaDateToIso(s) {
   return `${s.slice(0, 4)}-${s.slice(4, 6)}-${s.slice(6, 8)}`;

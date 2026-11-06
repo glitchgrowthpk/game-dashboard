@@ -40,6 +40,8 @@ jobs:
             echo "No changes."
           else
             git commit -m "Daily data $(date -u +%Y-%m-%d)"
+            # If someone pushed while the job ran, replay this commit on top (the fresh data wins).
+            git pull --rebase -X theirs origin main
             git push
           fi
 
