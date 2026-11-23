@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-22T13:58:02.911Z",
-  "periodEnd": "2026-11-21",
+  "generatedAt": "2026-11-23T17:14:08.387Z",
+  "periodEnd": "2026-11-22",
   "demo": false,
   "games": [
     {
@@ -11,15 +11,6 @@
       "ok": true,
       "warnings": [],
       "daily": [
-        {
-          "date": "2026-10-23",
-          "dau": 13,
-          "newUsers": 12,
-          "sessions": 18,
-          "engagementSec": 5499,
-          "revenue": 0.01,
-          "adRevenue": 0.01
-        },
         {
           "date": "2026-10-24",
           "dau": 89,
@@ -256,71 +247,74 @@
         },
         {
           "date": "2026-11-19",
-          "dau": 233,
+          "dau": 234,
           "newUsers": 148,
-          "sessions": 312,
-          "engagementSec": 74976,
+          "sessions": 314,
+          "engagementSec": 74977,
           "revenue": 0.52,
           "adRevenue": 0.52
         },
         {
           "date": "2026-11-20",
-          "dau": 407,
-          "newUsers": 308,
-          "sessions": 597,
-          "engagementSec": 142069,
+          "dau": 415,
+          "newUsers": 313,
+          "sessions": 607,
+          "engagementSec": 147920,
           "revenue": 1.05,
           "adRevenue": 1.05
         },
         {
           "date": "2026-11-21",
-          "dau": 423,
-          "newUsers": 273,
-          "sessions": 623,
-          "engagementSec": 136785,
+          "dau": 442,
+          "newUsers": 276,
+          "sessions": 646,
+          "engagementSec": 143434,
           "revenue": 1.88,
           "adRevenue": 1.88
+        },
+        {
+          "date": "2026-11-22",
+          "dau": 483,
+          "newUsers": 329,
+          "sessions": 743,
+          "engagementSec": 148206,
+          "revenue": 1.45,
+          "adRevenue": 1.45
         }
       ],
       "summary": {
         "last7": {
           "days": 7,
-          "dauAvg": 209.1,
-          "newUsers": 862,
-          "sessions": 2137,
-          "sessionsPerDau": 1.46,
-          "engagementMinPerDau": 5.9,
-          "revenue": 6.15,
-          "adRevenue": 6.15
+          "dauAvg": 267.3,
+          "newUsers": 1180,
+          "sessions": 2752,
+          "sessionsPerDau": 1.47,
+          "engagementMinPerDau": 5.5,
+          "revenue": 6.81,
+          "adRevenue": 6.81
         },
         "prev7": {
           "days": 7,
-          "dauAvg": 102.1,
-          "newUsers": 105,
-          "sessions": 1174,
-          "sessionsPerDau": 1.64,
-          "engagementMinPerDau": 6.7,
-          "revenue": 3.14,
-          "adRevenue": 3.14
+          "dauAvg": 100.3,
+          "newUsers": 106,
+          "sessions": 1127,
+          "sessionsPerDau": 1.61,
+          "engagementMinPerDau": 7.2,
+          "revenue": 3.66,
+          "adRevenue": 3.66
         },
         "yesterday": {
-          "date": "2026-11-21",
-          "dau": 423,
-          "newUsers": 273,
-          "sessions": 623,
-          "engagementSec": 136785,
-          "revenue": 1.88,
-          "adRevenue": 1.88
+          "date": "2026-11-22",
+          "dau": 483,
+          "newUsers": 329,
+          "sessions": 743,
+          "engagementSec": 148206,
+          "revenue": 1.45,
+          "adRevenue": 1.45
         }
       },
       "retention": {
         "cohorts": [
-          {
-            "date": "2026-11-07",
-            "users": 21,
-            "d1": 0.1429,
-            "d7": 0.0476
-          },
           {
             "date": "2026-11-08",
             "users": 18,
@@ -367,7 +361,7 @@
             "date": "2026-11-15",
             "users": 19,
             "d1": 0.2105,
-            "d7": null
+            "d7": 0.1053
           },
           {
             "date": "2026-11-16",
@@ -390,174 +384,180 @@
           {
             "date": "2026-11-19",
             "users": 148,
-            "d1": 0.2635,
+            "d1": 0.2703,
             "d7": null
           },
           {
             "date": "2026-11-20",
-            "users": 309,
-            "d1": 0.2265,
+            "users": 314,
+            "d1": 0.2484,
+            "d7": null
+          },
+          {
+            "date": "2026-11-21",
+            "users": 274,
+            "d1": 0.1934,
             "d7": null
           }
         ],
-        "d1": 0.2182,
-        "d7": 0.0189
+        "d1": 0.2213,
+        "d7": 0
       },
       "events": [
         {
           "name": "battle",
-          "count7": 43240,
-          "prev7": 12549,
-          "users7": 704
+          "count7": 52634,
+          "prev7": 14652,
+          "users7": 882
         },
         {
           "name": "home",
-          "count7": 13374,
-          "prev7": 2429,
-          "users7": 601
+          "count7": 17143,
+          "prev7": 3116,
+          "users7": 772
         },
         {
           "name": "ftue",
-          "count7": 11392,
-          "prev7": 1775,
-          "users7": 903
+          "count7": 15225,
+          "prev7": 2018,
+          "users7": 1175
         },
         {
           "name": "meta",
-          "count7": 9787,
-          "prev7": 2017,
-          "users7": 599
+          "count7": 12418,
+          "prev7": 2510,
+          "users7": 778
         },
         {
           "name": "adoffer",
-          "count7": 7488,
-          "prev7": 1972,
-          "users7": 607
+          "count7": 9382,
+          "prev7": 2366,
+          "users7": 746
         },
         {
           "name": "level_start",
-          "count7": 6299,
-          "prev7": 2055,
-          "users7": 1019
+          "count7": 7788,
+          "prev7": 2282,
+          "users7": 1284
         },
         {
           "name": "engagement",
-          "count7": 6101,
-          "prev7": 2038,
-          "users7": 949
+          "count7": 7520,
+          "prev7": 2262,
+          "users7": 1183
         },
         {
           "name": "level_end",
-          "count7": 5306,
-          "prev7": 1542,
-          "users7": 701
+          "count7": 6468,
+          "prev7": 1794,
+          "users7": 880
         },
         {
           "name": "earn_virtual_currency",
-          "count7": 5017,
-          "prev7": 1354,
-          "users7": 641
+          "count7": 6244,
+          "prev7": 1568,
+          "users7": 809
         },
         {
           "name": "screen_view",
-          "count7": 4438,
-          "prev7": 1891,
-          "users7": 1123
+          "count7": 5816,
+          "prev7": 1900,
+          "users7": 1413
         },
         {
           "name": "user_engagement",
-          "count7": 3616,
-          "prev7": 1637,
-          "users7": 1068
+          "count7": 4765,
+          "prev7": 1605,
+          "users7": 1351
         },
         {
           "name": "ad_impression",
-          "count7": 3349,
-          "prev7": 1277,
-          "users7": 523
+          "count7": 4342,
+          "prev7": 1267,
+          "users7": 652
         },
         {
           "name": "ad_show",
-          "count7": 2851,
-          "prev7": 1108,
-          "users7": 522
+          "count7": 3666,
+          "prev7": 1074,
+          "users7": 651
         },
         {
           "name": "session_start",
-          "count7": 1976,
-          "prev7": 1020,
-          "users7": 1150
+          "count7": 2546,
+          "prev7": 988,
+          "users7": 1447
         },
         {
           "name": "spend_virtual_currency",
-          "count7": 986,
-          "prev7": 214,
-          "users7": 276
+          "count7": 1231,
+          "prev7": 263,
+          "users7": 360
         },
         {
           "name": "first_open",
-          "count7": 862,
-          "prev7": 105,
-          "users7": 860
+          "count7": 1180,
+          "prev7": 106,
+          "users7": 1178
         },
         {
           "name": "notifications",
-          "count7": 464,
-          "prev7": 88,
-          "users7": 464
+          "count7": 611,
+          "prev7": 106,
+          "users7": 608
         },
         {
           "name": "app_remove",
-          "count7": 431,
-          "prev7": 226,
-          "users7": 431
+          "count7": 565,
+          "prev7": 208,
+          "users7": 565
         },
         {
           "name": "ad_click",
-          "count7": 268,
-          "prev7": 64,
-          "users7": 129
+          "count7": 362,
+          "prev7": 70,
+          "users7": 167
         },
         {
           "name": "ad_clicked",
-          "count7": 181,
+          "count7": 274,
           "prev7": 54,
-          "users7": 76
+          "users7": 108
         },
         {
           "name": "ad_reward",
-          "count7": 117,
-          "prev7": 44,
-          "users7": 34
+          "count7": 208,
+          "prev7": 59,
+          "users7": 41
         },
         {
           "name": "ad_rewardreceived",
-          "count7": 113,
-          "prev7": 44,
-          "users7": 33
+          "count7": 203,
+          "prev7": 59,
+          "users7": 39
         },
         {
           "name": "tutorial",
-          "count7": 17,
-          "prev7": 7,
-          "users7": 17
+          "count7": 23,
+          "prev7": 5,
+          "users7": 23
         },
         {
           "name": "os_update",
-          "count7": 2,
+          "count7": 4,
           "prev7": 5,
-          "users7": 2
+          "users7": 4
         },
         {
           "name": "app_clear_data",
-          "count7": 2,
+          "count7": 3,
           "prev7": 3,
-          "users7": 2
+          "users7": 3
         },
         {
           "name": "app_exception",
           "count7": 1,
-          "prev7": 9,
+          "prev7": 8,
           "users7": 1
         },
         {
@@ -576,71 +576,71 @@
       "versions": [
         {
           "name": "1.4.18",
-          "users": 957
+          "users": 1265
         },
         {
           "name": "1.1.0",
-          "users": 139
+          "users": 132
         },
         {
           "name": "1.3.3",
-          "users": 24
+          "users": 23
         },
         {
           "name": "1.3.4",
-          "users": 19
+          "users": 21
         },
         {
           "name": "1.3.1",
-          "users": 3
+          "users": 2
         }
       ],
       "countries": [
         {
           "name": "Iran",
-          "users": 116
+          "users": 157
         },
         {
           "name": "India",
-          "users": 69
+          "users": 96
         },
         {
           "name": "Algeria",
-          "users": 50
+          "users": 59
         },
         {
           "name": "Iraq",
-          "users": 42
-        },
-        {
-          "name": "Morocco",
-          "users": 41
-        },
-        {
-          "name": "Egypt",
-          "users": 38
+          "users": 55
         },
         {
           "name": "Myanmar (Burma)",
-          "users": 33
+          "users": 50
         },
         {
-          "name": "Venezuela",
-          "users": 31
+          "name": "Morocco",
+          "users": 48
+        },
+        {
+          "name": "Egypt",
+          "users": 44
         },
         {
           "name": "Pakistan",
-          "users": 29
+          "users": 42
         },
         {
-          "name": "Sudan",
-          "users": 28
+          "name": "Haiti",
+          "users": 40
+        },
+        {
+          "name": "Bangladesh",
+          "users": 38
         }
       ],
       "platforms": [
         {
           "name": "Android",
-          "users": 1134
+          "users": 1436
         }
       ]
     },
@@ -652,15 +652,6 @@
       "ok": true,
       "warnings": [],
       "daily": [
-        {
-          "date": "2026-10-23",
-          "dau": 0,
-          "newUsers": 0,
-          "sessions": 0,
-          "engagementSec": 0,
-          "revenue": 0,
-          "adRevenue": 0
-        },
         {
           "date": "2026-10-24",
           "dau": 0,
@@ -908,7 +899,7 @@
           "date": "2026-11-20",
           "dau": 9,
           "newUsers": 0,
-          "sessions": 20,
+          "sessions": 19,
           "engagementSec": 1316,
           "revenue": 0,
           "adRevenue": 0
@@ -921,47 +912,50 @@
           "engagementSec": 787,
           "revenue": 0,
           "adRevenue": 0
+        },
+        {
+          "date": "2026-11-22",
+          "dau": 9,
+          "newUsers": 2,
+          "sessions": 14,
+          "engagementSec": 763,
+          "revenue": 0,
+          "adRevenue": 0
         }
       ],
       "summary": {
         "last7": {
           "days": 7,
-          "dauAvg": 11.4,
+          "dauAvg": 10.9,
           "newUsers": 14,
-          "sessions": 149,
-          "sessionsPerDau": 1.86,
-          "engagementMinPerDau": 2.5,
+          "sessions": 138,
+          "sessionsPerDau": 1.82,
+          "engagementMinPerDau": 2.1,
           "revenue": 0,
           "adRevenue": 0
         },
         "prev7": {
           "days": 7,
-          "dauAvg": 22.1,
-          "newUsers": 35,
-          "sessions": 315,
-          "sessionsPerDau": 2.03,
+          "dauAvg": 18.3,
+          "newUsers": 29,
+          "sessions": 255,
+          "sessionsPerDau": 1.99,
           "engagementMinPerDau": 2.6,
           "revenue": 0,
           "adRevenue": 0
         },
         "yesterday": {
-          "date": "2026-11-21",
+          "date": "2026-11-22",
           "dau": 9,
           "newUsers": 2,
-          "sessions": 19,
-          "engagementSec": 787,
+          "sessions": 14,
+          "engagementSec": 763,
           "revenue": 0,
           "adRevenue": 0
         }
       },
       "retention": {
         "cohorts": [
-          {
-            "date": "2026-11-07",
-            "users": 22,
-            "d1": 0.1818,
-            "d7": 0
-          },
           {
             "date": "2026-11-08",
             "users": 8,
@@ -1008,7 +1002,7 @@
             "date": "2026-11-15",
             "users": 2,
             "d1": 0,
-            "d7": null
+            "d7": 0
           },
           {
             "date": "2026-11-16",
@@ -1033,65 +1027,71 @@
             "users": 2,
             "d1": 0,
             "d7": null
+          },
+          {
+            "date": "2026-11-21",
+            "users": 2,
+            "d1": 0,
+            "d7": null
           }
         ],
-        "d1": 0.1818,
-        "d7": 0
+        "d1": null,
+        "d7": null
       },
       "events": [
         {
           "name": "user_engagement",
-          "count7": 115,
-          "prev7": 225,
-          "users7": 65
+          "count7": 105,
+          "prev7": 181,
+          "users7": 61
         },
         {
           "name": "session_start",
-          "count7": 109,
-          "prev7": 212,
-          "users7": 71
+          "count7": 100,
+          "prev7": 176,
+          "users7": 69
         },
         {
           "name": "screen_view",
-          "count7": 103,
-          "prev7": 218,
-          "users7": 66
+          "count7": 89,
+          "prev7": 181,
+          "users7": 63
         },
         {
           "name": "app_remove",
-          "count7": 46,
-          "prev7": 123,
-          "users7": 46
+          "count7": 45,
+          "prev7": 98,
+          "users7": 45
         },
         {
           "name": "first_open",
           "count7": 14,
-          "prev7": 35,
+          "prev7": 29,
           "users7": 14
         },
         {
           "name": "ad_impression",
-          "count7": 14,
-          "prev7": 16,
+          "count7": 8,
+          "prev7": 21,
           "users7": 4
+        },
+        {
+          "name": "ad_click",
+          "count7": 1,
+          "prev7": 3,
+          "users7": 1
         },
         {
           "name": "os_update",
           "count7": 1,
-          "prev7": 1,
+          "prev7": 0,
           "users7": 1
-        },
-        {
-          "name": "ad_click",
-          "count7": 0,
-          "prev7": 5,
-          "users7": 0
         }
       ],
       "versions": [
         {
           "name": "2",
-          "users": 66
+          "users": 62
         }
       ],
       "countries": [
@@ -1104,23 +1104,23 @@
           "users": 5
         },
         {
-          "name": "India",
-          "users": 4
-        },
-        {
-          "name": "Libya",
-          "users": 4
-        },
-        {
           "name": "Venezuela",
-          "users": 4
+          "users": 5
         },
         {
           "name": "Algeria",
-          "users": 3
+          "users": 4
         },
         {
           "name": "Bangladesh",
+          "users": 3
+        },
+        {
+          "name": "India",
+          "users": 3
+        },
+        {
+          "name": "Indonesia",
           "users": 3
         },
         {
@@ -1139,7 +1139,7 @@
       "platforms": [
         {
           "name": "Android",
-          "users": 66
+          "users": 62
         }
       ]
     }
