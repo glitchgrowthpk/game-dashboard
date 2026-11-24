@@ -83,11 +83,50 @@ async function fetchDaily(client, pid, end) {
   return days;
 }
 
+/**
+ * Google Ads spend per day for this game. GA4 reports cost for every campaign in the linked Ads
+ * account (all games share it), so only campaigns whose name contains one of `patterns` count.
+ * Returns { byDate: Map(date -> cost), campaigns: [{ name, spend7, spendPrev7 }] }.
+ */
+async function fetchSpend(client, pid, end, patterns) {
+  const rows = await report(client, pid, {
+    dateRanges: [{ startDate: addDays(end, -(DAYS - 1)), endDate: end }],
+    dimensions: [{ name: 'date' }, { name: 'sessionGoogleAdsCampaignName' }],
+    metrics: [{ name: 'advertiserAdCost' }],
+    limit: 10000,
+  });
+  const norm = (s) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
+  const wanted = patterns.map(norm);
+  const mine = (name) => wanted.some((p) => norm(name).includes(p));
+  const byDate = new Map();
+  const camps = new Map();
+  const cur7 = addDays(end, -6), prev7 = addDays(end, -13);
+  for (const r of rows) {
+    const name = r.sessionGoogleAdsCampaignName;
+    if (!name || !mine(name)) continue;
+    const date = gaDateToIso(r.date);
+    byDate.set(date, (byDate.get(date) ?? 0) + r.advertiserAdCost);
+    const c = camps.get(name) ?? { name, spend7: 0, spendPrev7: 0 };
+    if (date >= cur7) c.spend7 += r.advertiserAdCost;
+    else if (date >= prev7) c.spendPrev7 += r.advertiserAdCost;
+    camps.set(name, c);
+  }
+  const campaigns = [...camps.values()]
+    .map((c) => ({ name: c.name, spend7: round(c.spend7, 2), spendPrev7: round(c.spendPrev7, 2) }))
+    .sort((a, b) => b.spend7 - a.spend7 || b.spendPrev7 - a.spendPrev7);
+  return { byDate, campaigns };
+}
+
 export function summarize(days) {
-  const sum = (arr, k) => arr.reduce((a, d) => a + d[k], 0);
+  const sum = (arr, k) => arr.reduce((a, d) => a + (d[k] ?? 0), 0);
   const win = (arr) => {
     const dau = sum(arr, 'dau');
+    const spend = round(sum(arr, 'spend'), 2);
+    const revenue = round(sum(arr, 'revenue'), 2);
     return {
+      spend,
+      profit: round(revenue - spend, 2),
+      roas: spend ? round(revenue / spend, 4) : null,
       days: arr.length,
       dauAvg: round(dau / Math.max(arr.length, 1), 1),
       newUsers: sum(arr, 'newUsers'),
@@ -189,9 +228,8 @@ async function fetchGame(client, game, end) {
   const out = { id: game.id, name: game.name, propertyId: pid, currency: game.currency ?? 'USD', ok: true, warnings: [] };
   const daily = await fetchDaily(client, pid, end);
   out.daily = daily;
-  out.summary = summarize(daily);
 
-  // The breakdowns are nice-to-have: a failure there shouldn't lose the core numbers.
+  // The extras are nice-to-have: a failure there shouldn't lose the core numbers.
   const optional = async (key, fn) => {
     try {
       out[key] = await fn();
@@ -200,6 +238,14 @@ async function fetchGame(client, game, end) {
       out.warnings.push(`${key}: ${e.message}`);
     }
   };
+  if (game.adCampaigns?.length) {
+    await optional('campaigns', async () => {
+      const { byDate, campaigns } = await fetchSpend(client, pid, end, game.adCampaigns);
+      for (const d of daily) d.spend = round(byDate.get(d.date) ?? 0, 2);
+      return campaigns;
+    });
+  }
+  out.summary = summarize(daily);
   await optional('retention', () => fetchRetention(client, pid, end));
   await optional('events', () => fetchEvents(client, pid, end));
   await optional('versions', () => fetchBreakdown(client, pid, 'appVersion', 8, end));

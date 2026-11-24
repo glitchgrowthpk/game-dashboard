@@ -2,11 +2,13 @@
   {
     "id": "sword-knight",
     "name": "Sword Knight Puzzle War",
-    "ga4PropertyId": "559933012"
+    "ga4PropertyId": "559933012",
+    "adCampaigns": ["SKPW", "SwordKnightPuzzleWar"]
   },
   {
-    "id": "jelly-kitchen",
-    "name": "Grandma's Jelly Kitchen",
-    "ga4PropertyId": "560948377"
+    "id": "jelly-slash",
+    "name": "Jelly Slash",
+    "ga4PropertyId": "560948377",
+    "adCampaigns": ["Jelly_Slash", "JellySlash"]
   }
 ]

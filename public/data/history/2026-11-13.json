@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-14T12:54:00.010Z",
+  "generatedAt": "2026-11-24T06:38:48.008Z",
   "periodEnd": "2026-11-13",
   "demo": false,
   "games": [
@@ -18,7 +18,8 @@
           "sessions": 0,
           "engagementSec": 0,
           "revenue": 0,
-          "adRevenue": 0
+          "adRevenue": 0,
+          "spend": 0
         },
         {
           "date": "2026-10-16",
@@ -27,7 +28,8 @@
           "sessions": 0,
           "engagementSec": 0,
           "revenue": 0,
-          "adRevenue": 0
+          "adRevenue": 0,
+          "spend": 0
         },
         {
           "date": "2026-10-17",
@@ -36,7 +38,8 @@
           "sessions": 0,
           "engagementSec": 0,
           "revenue": 0,
-          "adRevenue": 0
+          "adRevenue": 0,
+          "spend": 0
         },
         {
           "date": "2026-10-18",
@@ -45,7 +48,8 @@
           "sessions": 0,
           "engagementSec": 0,
           "revenue": 0,
-          "adRevenue": 0
+          "adRevenue": 0,
+          "spend": 0
         },
         {
           "date": "2026-10-19",
@@ -54,7 +58,8 @@
           "sessions": 0,
           "engagementSec": 0,
           "revenue": 0,
-          "adRevenue": 0
+          "adRevenue": 0,
+          "spend": 0
         },
         {
           "date": "2026-10-20",
@@ -63,7 +68,8 @@
           "sessions": 0,
           "engagementSec": 0,
           "revenue": 0,
-          "adRevenue": 0
+          "adRevenue": 0,
+          "spend": 0
         },
         {
           "date": "2026-10-21",
@@ -72,7 +78,8 @@
           "sessions": 4,
           "engagementSec": 0,
           "revenue": 0,
-          "adRevenue": 0
+          "adRevenue": 0,
+          "spend": 0
         },
         {
           "date": "2026-10-22",
@@ -81,7 +88,8 @@
           "sessions": 2,
           "engagementSec": 466,
           "revenue": 0,
-          "adRevenue": 0
+          "adRevenue": 0,
+          "spend": 0
         },
         {
           "date": "2026-10-23",
@@ -90,7 +98,8 @@
           "sessions": 18,
           "engagementSec": 5499,
           "revenue": 0.01,
-          "adRevenue": 0.01
+          "adRevenue": 0.01,
+          "spend": 0
         },
         {
           "date": "2026-10-24",
@@ -99,7 +108,8 @@
           "sessions": 101,
           "engagementSec": 22258,
           "revenue": 0.07,
-          "adRevenue": 0.07
+          "adRevenue": 0.07,
+          "spend": 20.01
         },
         {
           "date": "2026-10-25",
@@ -108,7 +118,8 @@
           "sessions": 388,
           "engagementSec": 82370,
           "revenue": 0.38,
-          "adRevenue": 0.38
+          "adRevenue": 0.38,
+          "spend": 11.32
         },
         {
           "date": "2026-10-26",
@@ -117,7 +128,8 @@
           "sessions": 458,
           "engagementSec": 122563,
           "revenue": 0.25,
-          "adRevenue": 0.25
+          "adRevenue": 0.25,
+          "spend": 10.99
         },
         {
           "date": "2026-10-27",
@@ -126,7 +138,8 @@
           "sessions": 541,
           "engagementSec": 124913,
           "revenue": 0.29,
-          "adRevenue": 0.29
+          "adRevenue": 0.29,
+          "spend": 10.94
         },
         {
           "date": "2026-10-28",
@@ -135,7 +148,8 @@
           "sessions": 678,
           "engagementSec": 157125,
           "revenue": 0.34,
-          "adRevenue": 0.34
+          "adRevenue": 0.34,
+          "spend": 12.07
         },
         {
           "date": "2026-10-29",
@@ -144,7 +158,8 @@
           "sessions": 709,
           "engagementSec": 197432,
           "revenue": 0.49,
-          "adRevenue": 0.49
+          "adRevenue": 0.49,
+          "spend": 10.91
         },
         {
           "date": "2026-10-30",
@@ -153,7 +168,8 @@
           "sessions": 780,
           "engagementSec": 231476,
           "revenue": 0.32,
-          "adRevenue": 0.32
+          "adRevenue": 0.32,
+          "spend": 10.07
         },
         {
           "date": "2026-10-31",
@@ -162,7 +178,8 @@
           "sessions": 857,
           "engagementSec": 247153,
           "revenue": 3.77,
-          "adRevenue": 3.77
+          "adRevenue": 3.77,
+          "spend": 29.78
         },
         {
           "date": "2026-11-01",
@@ -171,7 +188,8 @@
           "sessions": 980,
           "engagementSec": 279195,
           "revenue": 2.61,
-          "adRevenue": 2.61
+          "adRevenue": 2.61,
+          "spend": 30.61
         },
         {
           "date": "2026-11-02",
@@ -180,7 +198,8 @@
           "sessions": 739,
           "engagementSec": 223083,
           "revenue": 2.14,
-          "adRevenue": 2.14
+          "adRevenue": 2.14,
+          "spend": 27.71
         },
         {
           "date": "2026-11-03",
@@ -189,7 +208,8 @@
           "sessions": 543,
           "engagementSec": 189163,
           "revenue": 3.22,
-          "adRevenue": 3.22
+          "adRevenue": 3.22,
+          "spend": 18.98
         },
         {
           "date": "2026-11-04",
@@ -198,7 +218,8 @@
           "sessions": 445,
           "engagementSec": 152469,
           "revenue": 3.09,
-          "adRevenue": 3.09
+          "adRevenue": 3.09,
+          "spend": 7.4
         },
         {
           "date": "2026-11-05",
@@ -207,7 +228,8 @@
           "sessions": 312,
           "engagementSec": 84110,
           "revenue": 0.94,
-          "adRevenue": 0.94
+          "adRevenue": 0.94,
+          "spend": 2.83
         },
         {
           "date": "2026-11-06",
@@ -216,7 +238,8 @@
           "sessions": 243,
           "engagementSec": 68539,
           "revenue": 0.73,
-          "adRevenue": 0.73
+          "adRevenue": 0.73,
+          "spend": 0.38
         },
         {
           "date": "2026-11-07",
@@ -225,7 +248,8 @@
           "sessions": 249,
           "engagementSec": 57445,
           "revenue": 0.81,
-          "adRevenue": 0.81
+          "adRevenue": 0.81,
+          "spend": 0.57
         },
         {
           "date": "2026-11-08",
@@ -234,25 +258,28 @@
           "sessions": 210,
           "engagementSec": 48552,
           "revenue": 0.27,
-          "adRevenue": 0.27
+          "adRevenue": 0.27,
+          "spend": 0.42
         },
         {
           "date": "2026-11-09",
           "dau": 90,
           "newUsers": 5,
-          "sessions": 176,
+          "sessions": 175,
           "engagementSec": 50983,
           "revenue": 0.22,
-          "adRevenue": 0.22
+          "adRevenue": 0.22,
+          "spend": 0.64
         },
         {
           "date": "2026-11-10",
           "dau": 87,
           "newUsers": 10,
-          "sessions": 141,
+          "sessions": 140,
           "engagementSec": 37780,
           "revenue": 0.18,
-          "adRevenue": 0.18
+          "adRevenue": 0.18,
+          "spend": 0.55
         },
         {
           "date": "2026-11-11",
@@ -260,40 +287,61 @@
           "newUsers": 32,
           "sessions": 169,
           "engagementSec": 38384,
-          "revenue": 0.34,
-          "adRevenue": 0.34
+          "revenue": 0.35,
+          "adRevenue": 0.35,
+          "spend": 0.52
         },
         {
           "date": "2026-11-12",
-          "dau": 109,
+          "dau": 110,
           "newUsers": 14,
-          "sessions": 166,
-          "engagementSec": 44417,
-          "revenue": 0.81,
-          "adRevenue": 0.81
+          "sessions": 168,
+          "engagementSec": 44683,
+          "revenue": 0.9,
+          "adRevenue": 0.9,
+          "spend": 0.83
         },
         {
           "date": "2026-11-13",
-          "dau": 92,
-          "newUsers": 14,
-          "sessions": 135,
-          "engagementSec": 26221,
-          "revenue": 0.4,
-          "adRevenue": 0.4
+          "dau": 104,
+          "newUsers": 15,
+          "sessions": 155,
+          "engagementSec": 30880,
+          "revenue": 0.41,
+          "adRevenue": 0.41,
+          "spend": 2.24
+        }
+      ],
+      "campaigns": [
+        {
+          "name": "Android_SKPW_WW_ARO_30Oct26",
+          "spend7": 5.77,
+          "spendPrev7": 93.43
+        },
+        {
+          "name": "Android_SwordKnightPuzzleWar_WW_CPI_23Oct26",
+          "spend7": 0,
+          "spendPrev7": 24.25
         }
       ],
       "summary": {
         "last7": {
+          "spend": 5.77,
+          "profit": -2.63,
+          "roas": 0.5442,
           "days": 7,
-          "dauAvg": 106.3,
-          "newUsers": 114,
-          "sessions": 1246,
+          "dauAvg": 108.1,
+          "newUsers": 115,
+          "sessions": 1266,
           "sessionsPerDau": 1.67,
           "engagementMinPerDau": 6.8,
-          "revenue": 3.03,
-          "adRevenue": 3.03
+          "revenue": 3.14,
+          "adRevenue": 3.14
         },
         "prev7": {
+          "spend": 117.69,
+          "profit": -101.19,
+          "roas": 0.1402,
           "days": 7,
           "dauAvg": 366.1,
           "newUsers": 1287,
@@ -305,12 +353,13 @@
         },
         "yesterday": {
           "date": "2026-11-13",
-          "dau": 92,
-          "newUsers": 14,
-          "sessions": 135,
-          "engagementSec": 26221,
-          "revenue": 0.4,
-          "adRevenue": 0.4
+          "dau": 104,
+          "newUsers": 15,
+          "sessions": 155,
+          "engagementSec": 30880,
+          "revenue": 0.41,
+          "adRevenue": 0.41,
+          "spend": 2.24
         }
       },
       "retention": {
@@ -355,7 +404,7 @@
             "date": "2026-11-05",
             "users": 39,
             "d1": 0.1538,
-            "d7": 0.0513
+            "d7": 0.0769
           },
           {
             "date": "2026-11-06",
@@ -401,74 +450,74 @@
           }
         ],
         "d1": 0.1977,
-        "d7": 0.0449
+        "d7": 0.0455
       },
       "events": [
         {
           "name": "battle",
-          "count7": 12065,
+          "count7": 12276,
           "prev7": 45716,
-          "users7": 266
+          "users7": 272
         },
         {
           "name": "home",
-          "count7": 2179,
+          "count7": 2205,
           "prev7": 3996,
-          "users7": 125
+          "users7": 126
         },
         {
           "name": "screen_view",
-          "count7": 2140,
+          "count7": 2162,
           "prev7": 8261,
-          "users7": 497
+          "users7": 507
         },
         {
           "name": "level_start",
-          "count7": 2021,
+          "count7": 2058,
           "prev7": 7769,
-          "users7": 403
+          "users7": 412
         },
         {
           "name": "engagement",
-          "count7": 2016,
+          "count7": 2057,
           "prev7": 8078,
-          "users7": 369
+          "users7": 377
         },
         {
           "name": "adoffer",
-          "count7": 1934,
+          "count7": 1947,
           "prev7": 7885,
-          "users7": 212
+          "users7": 216
         },
         {
           "name": "meta",
-          "count7": 1867,
+          "count7": 1888,
           "prev7": 3716,
-          "users7": 116
+          "users7": 117
         },
         {
           "name": "user_engagement",
-          "count7": 1746,
+          "count7": 1789,
           "prev7": 6446,
-          "users7": 458
+          "users7": 467
         },
         {
           "name": "ftue",
-          "count7": 1603,
+          "count7": 1627,
           "prev7": 6475,
-          "users7": 227
-        },
-        {
-          "name": "level_end",
-          "count7": 1480,
-          "prev7": 5646,
-          "users7": 260
+          "users7": 232
         },
         {
           "name": "ad_impression",
-          "count7": 1451,
+          "count7": 1527,
           "prev7": 8567,
-          "users7": 139
+          "users7": 140
+        },
+        {
+          "name": "level_end",
+          "count7": 1505,
+          "prev7": 5646,
+          "users7": 266
         },
         {
           "name": "ad_show",
@@ -478,33 +527,33 @@
         },
         {
           "name": "earn_virtual_currency",
-          "count7": 1291,
+          "count7": 1306,
           "prev7": 4502,
-          "users7": 201
+          "users7": 204
         },
         {
           "name": "session_start",
-          "count7": 1074,
+          "count7": 1096,
           "prev7": 3724,
-          "users7": 522
+          "users7": 532
         },
         {
           "name": "app_remove",
-          "count7": 237,
+          "count7": 238,
           "prev7": 892,
-          "users7": 236
+          "users7": 237
         },
         {
           "name": "spend_virtual_currency",
-          "count7": 207,
+          "count7": 208,
           "prev7": 485,
-          "users7": 59
+          "users7": 60
         },
         {
           "name": "first_open",
-          "count7": 114,
+          "count7": 115,
           "prev7": 1287,
-          "users7": 114
+          "users7": 115
         },
         {
           "name": "ad_clicked",
@@ -514,15 +563,15 @@
         },
         {
           "name": "notifications",
-          "count7": 77,
+          "count7": 78,
           "prev7": 128,
-          "users7": 76
+          "users7": 77
         },
         {
           "name": "ad_click",
-          "count7": 55,
+          "count7": 59,
           "prev7": 383,
-          "users7": 30
+          "users7": 32
         },
         {
           "name": "ad_reward",
@@ -576,11 +625,11 @@
       "versions": [
         {
           "name": "1.1.0",
-          "users": 284
+          "users": 292
         },
         {
           "name": "1.3.3",
-          "users": 126
+          "users": 127
         },
         {
           "name": "1.4.18",
@@ -610,15 +659,15 @@
         },
         {
           "name": "Egypt",
-          "users": 25
+          "users": 26
         },
         {
           "name": "India",
-          "users": 22
+          "users": 23
         },
         {
           "name": "Pakistan",
-          "users": 22
+          "users": 23
         },
         {
           "name": "Sudan",
@@ -630,27 +679,27 @@
         },
         {
           "name": "Iraq",
-          "users": 17
+          "users": 18
+        },
+        {
+          "name": "Algeria",
+          "users": 16
         },
         {
           "name": "Myanmar (Burma)",
           "users": 16
-        },
-        {
-          "name": "Algeria",
-          "users": 15
         }
       ],
       "platforms": [
         {
           "name": "Android",
-          "users": 487
+          "users": 496
         }
       ]
     },
     {
-      "id": "jelly-kitchen",
-      "name": "Grandma's Jelly Kitchen",
+      "id": "jelly-slash",
+      "name": "Jelly Slash",
       "propertyId": "560948377",
       "currency": "USD",
       "ok": true,
@@ -663,7 +712,8 @@
           "sessions": 0,
           "engagementSec": 0,
           "revenue": 0,
-          "adRevenue": 0
+          "adRevenue": 0,
+          "spend": 0
         },
         {
           "date": "2026-10-16",
@@ -672,7 +722,8 @@
           "sessions": 0,
           "engagementSec": 0,
           "revenue": 0,
-          "adRevenue": 0
+          "adRevenue": 0,
+          "spend": 0
         },
         {
           "date": "2026-10-17",
@@ -681,7 +732,8 @@
           "sessions": 0,
           "engagementSec": 0,
           "revenue": 0,
-          "adRevenue": 0
+          "adRevenue": 0,
+          "spend": 0
         },
         {
           "date": "2026-10-18",
@@ -690,7 +742,8 @@
           "sessions": 0,
           "engagementSec": 0,
           "revenue": 0,
-          "adRevenue": 0
+          "adRevenue": 0,
+          "spend": 0
         },
         {
           "date": "2026-10-19",
@@ -699,7 +752,8 @@
           "sessions": 0,
           "engagementSec": 0,
           "revenue": 0,
-          "adRevenue": 0
+          "adRevenue": 0,
+          "spend": 0
         },
         {
           "date": "2026-10-20",
@@ -708,7 +762,8 @@
           "sessions": 0,
           "engagementSec": 0,
           "revenue": 0,
-          "adRevenue": 0
+          "adRevenue": 0,
+          "spend": 0
         },
         {
           "date": "2026-10-21",
@@ -717,7 +772,8 @@
           "sessions": 0,
           "engagementSec": 0,
           "revenue": 0,
-          "adRevenue": 0
+          "adRevenue": 0,
+          "spend": 0
         },
         {
           "date": "2026-10-22",
@@ -726,7 +782,8 @@
           "sessions": 0,
           "engagementSec": 0,
           "revenue": 0,
-          "adRevenue": 0
+          "adRevenue": 0,
+          "spend": 0
         },
         {
           "date": "2026-10-23",
@@ -735,7 +792,8 @@
           "sessions": 0,
           "engagementSec": 0,
           "revenue": 0,
-          "adRevenue": 0
+          "adRevenue": 0,
+          "spend": 0
         },
         {
           "date": "2026-10-24",
@@ -744,7 +802,8 @@
           "sessions": 0,
           "engagementSec": 0,
           "revenue": 0,
-          "adRevenue": 0
+          "adRevenue": 0,
+          "spend": 0
         },
         {
           "date": "2026-10-25",
@@ -753,7 +812,8 @@
           "sessions": 0,
           "engagementSec": 0,
           "revenue": 0,
-          "adRevenue": 0
+          "adRevenue": 0,
+          "spend": 0
         },
         {
           "date": "2026-10-26",
@@ -762,7 +822,8 @@
           "sessions": 0,
           "engagementSec": 0,
           "revenue": 0,
-          "adRevenue": 0
+          "adRevenue": 0,
+          "spend": 0
         },
         {
           "date": "2026-10-27",
@@ -771,7 +832,8 @@
           "sessions": 0,
           "engagementSec": 0,
           "revenue": 0,
-          "adRevenue": 0
+          "adRevenue": 0,
+          "spend": 0
         },
         {
           "date": "2026-10-28",
@@ -780,7 +842,8 @@
           "sessions": 2,
           "engagementSec": 306,
           "revenue": 0,
-          "adRevenue": 0
+          "adRevenue": 0,
+          "spend": 0
         },
         {
           "date": "2026-10-29",
@@ -789,7 +852,8 @@
           "sessions": 16,
           "engagementSec": 3286,
           "revenue": 0,
-          "adRevenue": 0
+          "adRevenue": 0,
+          "spend": 0
         },
         {
           "date": "2026-10-30",
@@ -798,7 +862,8 @@
           "sessions": 129,
           "engagementSec": 20075,
           "revenue": 0,
-          "adRevenue": 0
+          "adRevenue": 0,
+          "spend": 9.95
         },
         {
           "date": "2026-10-31",
@@ -807,7 +872,8 @@
           "sessions": 103,
           "engagementSec": 8813,
           "revenue": 0.01,
-          "adRevenue": 0.01
+          "adRevenue": 0.01,
+          "spend": 10.03
         },
         {
           "date": "2026-11-01",
@@ -816,7 +882,8 @@
           "sessions": 84,
           "engagementSec": 7683,
           "revenue": 0,
-          "adRevenue": 0
+          "adRevenue": 0,
+          "spend": 10.26
         },
         {
           "date": "2026-11-02",
@@ -825,7 +892,8 @@
           "sessions": 167,
           "engagementSec": 21677,
           "revenue": 0,
-          "adRevenue": 0
+          "adRevenue": 0,
+          "spend": 10.48
         },
         {
           "date": "2026-11-03",
@@ -834,7 +902,8 @@
           "sessions": 230,
           "engagementSec": 24976,
           "revenue": 0.02,
-          "adRevenue": 0.02
+          "adRevenue": 0.02,
+          "spend": 11.3
         },
         {
           "date": "2026-11-04",
@@ -843,7 +912,8 @@
           "sessions": 291,
           "engagementSec": 30979,
           "revenue": 0,
-          "adRevenue": 0
+          "adRevenue": 0,
+          "spend": 11.29
         },
         {
           "date": "2026-11-05",
@@ -852,7 +922,8 @@
           "sessions": 319,
           "engagementSec": 42373,
           "revenue": 0.01,
-          "adRevenue": 0.01
+          "adRevenue": 0.01,
+          "spend": 11.21
         },
         {
           "date": "2026-11-06",
@@ -861,7 +932,8 @@
           "sessions": 269,
           "engagementSec": 30375,
           "revenue": 0.02,
-          "adRevenue": 0.02
+          "adRevenue": 0.02,
+          "spend": 7.55
         },
         {
           "date": "2026-11-07",
@@ -870,7 +942,8 @@
           "sessions": 116,
           "engagementSec": 8644,
           "revenue": 0.01,
-          "adRevenue": 0.01
+          "adRevenue": 0.01,
+          "spend": 0
         },
         {
           "date": "2026-11-08",
@@ -879,7 +952,8 @@
           "sessions": 84,
           "engagementSec": 7191,
           "revenue": 0,
-          "adRevenue": 0
+          "adRevenue": 0,
+          "spend": 0
         },
         {
           "date": "2026-11-09",
@@ -888,7 +962,8 @@
           "sessions": 44,
           "engagementSec": 3581,
           "revenue": 0,
-          "adRevenue": 0
+          "adRevenue": 0,
+          "spend": 0
         },
         {
           "date": "2026-11-10",
@@ -897,7 +972,8 @@
           "sessions": 54,
           "engagementSec": 2332,
           "revenue": 0,
-          "adRevenue": 0
+          "adRevenue": 0,
+          "spend": 0
         },
         {
           "date": "2026-11-11",
@@ -906,39 +982,55 @@
           "sessions": 34,
           "engagementSec": 3285,
           "revenue": 0,
-          "adRevenue": 0
+          "adRevenue": 0,
+          "spend": 0
         },
         {
           "date": "2026-11-12",
-          "dau": 16,
+          "dau": 18,
           "newUsers": 2,
-          "sessions": 32,
-          "engagementSec": 3045,
+          "sessions": 34,
+          "engagementSec": 3255,
           "revenue": 0,
-          "adRevenue": 0
+          "adRevenue": 0,
+          "spend": 0
         },
         {
           "date": "2026-11-13",
-          "dau": 20,
-          "newUsers": 3,
-          "sessions": 34,
-          "engagementSec": 1925,
+          "dau": 22,
+          "newUsers": 4,
+          "sessions": 38,
+          "engagementSec": 2226,
           "revenue": 0,
-          "adRevenue": 0
+          "adRevenue": 0,
+          "spend": 0
+        }
+      ],
+      "campaigns": [
+        {
+          "name": "Android_Jelly_Slash_WW_CPI_29Oct26",
+          "spend7": 0,
+          "spendPrev7": 72.11
         }
       ],
       "summary": {
         "last7": {
+          "spend": 0,
+          "profit": 0.01,
+          "roas": null,
           "days": 7,
-          "dauAvg": 29,
-          "newUsers": 52,
-          "sessions": 398,
-          "sessionsPerDau": 1.96,
+          "dauAvg": 29.6,
+          "newUsers": 53,
+          "sessions": 404,
+          "sessionsPerDau": 1.95,
           "engagementMinPerDau": 2.5,
           "revenue": 0.01,
           "adRevenue": 0.01
         },
         "prev7": {
+          "spend": 72.12,
+          "profit": -72.06,
+          "roas": 0.0008,
           "days": 7,
           "dauAvg": 150.9,
           "newUsers": 875,
@@ -950,12 +1042,13 @@
         },
         "yesterday": {
           "date": "2026-11-13",
-          "dau": 20,
-          "newUsers": 3,
-          "sessions": 34,
-          "engagementSec": 1925,
+          "dau": 22,
+          "newUsers": 4,
+          "sessions": 38,
+          "engagementSec": 2226,
           "revenue": 0,
-          "adRevenue": 0
+          "adRevenue": 0,
+          "spend": 0
         }
       },
       "retention": {
@@ -1000,7 +1093,7 @@
             "date": "2026-11-05",
             "users": 183,
             "d1": 0.1257,
-            "d7": 0.0164
+            "d7": 0.0219
           },
           {
             "date": "2026-11-06",
@@ -1046,38 +1139,38 @@
           }
         ],
         "d1": 0.1181,
-        "d7": 0.0102
+        "d7": 0.0113
       },
       "events": [
         {
           "name": "user_engagement",
-          "count7": 291,
+          "count7": 299,
           "prev7": 1712,
-          "users7": 147
+          "users7": 150
         },
         {
           "name": "screen_view",
-          "count7": 279,
+          "count7": 284,
           "prev7": 1450,
-          "users7": 161
+          "users7": 164
         },
         {
           "name": "session_start",
-          "count7": 273,
+          "count7": 278,
           "prev7": 1357,
-          "users7": 171
+          "users7": 174
         },
         {
           "name": "app_remove",
-          "count7": 158,
+          "count7": 159,
           "prev7": 491,
-          "users7": 158
+          "users7": 159
         },
         {
           "name": "first_open",
-          "count7": 52,
+          "count7": 53,
           "prev7": 875,
-          "users7": 51
+          "users7": 52
         },
         {
           "name": "ad_impression",
@@ -1113,24 +1206,24 @@
       "versions": [
         {
           "name": "2",
-          "users": 155
+          "users": 158
         }
       ],
       "countries": [
         {
           "name": "India",
-          "users": 29
+          "users": 30
         },
         {
           "name": "Egypt",
           "users": 12
         },
         {
-          "name": "Bangladesh",
-          "users": 10
+          "name": "Indonesia",
+          "users": 11
         },
         {
-          "name": "Indonesia",
+          "name": "Bangladesh",
           "users": 10
         },
         {
@@ -1161,7 +1254,7 @@
       "platforms": [
         {
           "name": "Android",
-          "users": 155
+          "users": 158
         }
       ]
     }

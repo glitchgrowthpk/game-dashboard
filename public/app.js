@@ -30,6 +30,7 @@
   // Saved days (newest first). Missing on old deployments, which just hides the date menu.
   const savedDays = await getJson('data/history/index.json').then((x) => x.days ?? []).catch(() => []);
   const COMPARE = '__all';
+  const MIN_SPEND_FOR_ROAS = 1; // a few cents of spend would make daily ROAS spike to thousands of %
   const HINT = 'Click a line, bar or legend square to hide it. Click the legend again to show it.';
 
   // ---------- formatting ----------
@@ -171,7 +172,8 @@
           onHover: (e) => (e.native.target.style.cursor = 'pointer'),
           onLeave: (e) => (e.native.target.style.cursor = ''),
         },
-        tooltip: { callbacks: { label: (c) => ` ${c.dataset.label}: ${yFormat(c.parsed.y)}` } },
+        // A dataset may carry its own formatter (e.g. ROAS as % on a money chart).
+        tooltip: { callbacks: { label: (c) => ` ${c.dataset.label}: ${(c.dataset.fmt ?? yFormat)(c.parsed.y)}` } },
       },
       scales: {
         x: { grid: { display: false }, border: { color: css('--axis') }, ticks: { color: css('--muted'), maxTicksLimit: 8, maxRotation: 0 } },
@@ -187,7 +189,7 @@
       },
     };
   }
-  const seriesColor = (i) => css(`--series-${(i % 3) + 1}`); // fixed order: blue, orange, aqua
+  const seriesColor = (i) => css(`--series-${(i % 4) + 1}`); // fixed order: blue, orange, aqua, yellow
   const line = (label, data, i) => {
     const c = seriesColor(i);
     // monotone curves never overshoot between points (no dips below zero on sparse data)
@@ -281,7 +283,11 @@
     const offers = ev(g, 'adoffer'), rewards = ev(g, 'ad_reward');
     const arpdau = s.dauAvg ? s.revenue / 7 / s.dauAvg : null;
     const arpdauPrev = p.dauAvg ? p.revenue / 7 / p.dauAvg : null;
+    // Spend exists when the game has ad campaigns configured and the fetch got them.
+    const hasSpend = Array.isArray(g.campaigns);
+    const roasDay = (d) => (d.spend >= MIN_SPEND_FOR_ROAS ? Math.round((d.revenue / d.spend) * 1e4) / 1e4 : null);
     const more = [
+      tile('Minutes per DAU', dec(s.engagementMinPerDau), delta(s.engagementMinPerDau, p.engagementMinPerDau, g)),
       tile('ARPDAU', money(arpdau, cur, 4), delta(arpdau, arpdauPrev, g)),
       tile('Sessions per DAU', dec(s.sessionsPerDau, 2), delta(s.sessionsPerDau, p.sessionsPerDau, g)),
       winRate != null ? tile(ev(g, 'level_complete') ? 'Level win rate' : 'Levels finished', pct(winRate), delta(winRate, winPrev, g)) : '',
@@ -296,11 +302,20 @@
         <div class="tiles">
           ${tile('Avg DAU', int(s.dauAvg), delta(s.dauAvg, p.dauAvg, g))}
           ${tile('New users', int(s.newUsers), delta(s.newUsers, p.newUsers, g))}
+          ${hasSpend ? tile('Ad spend', money(s.spend, cur), note(`prior 7d ${money(p.spend, cur)}`)) : ''}
           ${tile('Revenue', money(s.revenue, cur), delta(s.revenue, p.revenue, g))}
+          ${hasSpend ? tile('Profit', `<span class="${s.profit < 0 ? 'neg' : ''}">${money(s.profit, cur)}</span>`, note(`prior 7d ${money(p.profit, cur)}`)) : ''}
+          ${hasSpend ? tile('ROAS', pct(s.roas), note(`prior 7d ${pct(p.roas)} · 100% = break-even`)) : ''}
           ${tile('Day-1 retention', pct(g.retention?.d1), note('install cohorts, 14 days'))}
           ${tile('Day-7 retention', pct(g.retention?.d7), note('install cohorts, 14 days'))}
-          ${tile('Minutes per DAU', dec(s.engagementMinPerDau), delta(s.engagementMinPerDau, p.engagementMinPerDau, g))}
         </div>
+        ${hasSpend ? `<div class="card">
+          <div class="card-head"><h3>Ad spend vs revenue, profit and ROAS</h3></div>
+          <div class="chart-box tall"><canvas id="spend-canvas"></canvas></div>
+          <p class="chart-caption">Ad spend is the Google Ads cost of ${g.campaigns.length ? esc(g.campaigns.map((c) => c.name).join(', ')) : 'this game’s campaigns (none found yet)'}.
+            Profit = revenue − ad spend. ROAS = revenue ÷ ad spend for the same day, on the right-hand scale (100% = break-even; days under ${money(MIN_SPEND_FOR_ROAS, cur)} spend are skipped).
+            Revenue counts every player, not only ad installs. ${HINT}</p>
+        </div>` : ''}
         <div class="grid main">
           ${trend.html}
           <div class="card">
@@ -310,6 +325,13 @@
           </div>
         </div>
         <details class="card fold"><summary>More numbers</summary><div class="tiles">${more}</div></details>
+        ${hasSpend ? `<details class="card fold"><summary>Ad campaigns (${g.campaigns.length})</summary>
+          <div class="table-scroll"><table>
+            <thead><tr><th>Campaign</th><th>Spend, last 7d</th><th>Prior 7d</th><th>Change</th></tr></thead>
+            <tbody>${g.campaigns
+              .map((c) => `<tr><td>${esc(c.name)}</td><td>${money(c.spend7, cur)}</td><td>${money(c.spendPrev7, cur)}</td><td>${changeText(change(c.spend7, c.spendPrev7))}</td></tr>`)
+              .join('') || '<tr><td colspan="4">No matching campaigns in Google Ads.</td></tr>'}</tbody></table></div>
+        </details>` : ''}
         <details class="card fold"><summary>Events, last 7 days (${(g.events ?? []).length})</summary>
           <div class="table-scroll"><table>
             <thead><tr><th>Event</th><th>Count</th><th>Prior 7d</th><th>Change</th><th>Users</th><th>Per user</th></tr></thead>
@@ -328,6 +350,35 @@
           ${g.warnings?.length ? `<h3>Data warnings</h3><ul class="warn-list">${g.warnings.map((w) => `<li>${esc(w)}</li>`).join('')}</ul>` : ''}
         </details>`,
       mount() {
+        if (hasSpend) {
+          const days = g.daily.slice(firstActive(g.daily));
+          const labels = days.map((d) => shortDate(d.date));
+          const m = (v) => money(v, cur);
+          const o = options(moneyAxis(cur));
+          // Profit can go negative: let the axis drop below zero and draw zero a little stronger.
+          o.scales.y.grid.color = (ctx) => (ctx.tick?.value === 0 ? css('--axis') : css('--grid'));
+          o.scales.y1 = {
+            position: 'right',
+            beginAtZero: true,
+            grid: { display: false },
+            border: { display: false },
+            ticks: { color: css('--muted'), maxTicksLimit: 5, callback: (v) => `${Math.round(v * 100)}%` },
+            title: { display: true, text: 'ROAS', color: css('--muted') },
+          };
+          add('spend-canvas', {
+            type: 'line',
+            data: {
+              labels,
+              datasets: [
+                { ...line('Ad spend', days.map((d) => d.spend ?? 0), 1), fmt: m },
+                { ...line('Revenue', days.map((d) => d.revenue), 0), fmt: m },
+                { ...line('Profit', days.map((d) => Math.round((d.revenue - (d.spend ?? 0)) * 100) / 100), 2), fmt: m },
+                { ...line('ROAS', days.map(roasDay), 3), yAxisID: 'y1', borderDash: [6, 4], spanGaps: false, fmt: pct },
+              ],
+            },
+            options: o,
+          });
+        }
         trend.mount();
         const o = options(pct);
         o.plugins.tooltip.callbacks.afterBody = (items) => (items[0] ? ` ${int(cohorts[items[0].dataIndex].users)} installs` : '');
@@ -366,7 +417,7 @@
         <div class="view-head"><h2>All games</h2><span class="meta">Last 7 days</span></div>
         <div class="card">
           <div class="table-scroll"><table>
-            <thead><tr><th>Game</th><th>Avg DAU</th><th>vs prior</th><th>New users</th><th>D1</th><th>D7</th><th>Min/DAU</th><th>Revenue</th></tr></thead>
+            <thead><tr><th>Game</th><th>Avg DAU</th><th>vs prior</th><th>New users</th><th>D1</th><th>D7</th><th>Min/DAU</th><th>Ad spend</th><th>Revenue</th><th>Profit</th><th>ROAS</th></tr></thead>
             <tbody>${games
               .map((g) => {
                 if (!g.ok) return `<tr><td>${esc(g.name)}</td><td colspan="7">Data failed: ${esc(g.error)}</td></tr>`;
@@ -374,7 +425,9 @@
                 return `<tr><td><button type="button" class="link" data-open="${esc(g.id)}">${esc(g.name)}</button></td>
                   <td>${int(s.dauAvg)}</td><td>${isNewGame(g) ? 'new' : changeText(change(s.dauAvg, p.dauAvg))}</td>
                   <td>${int(s.newUsers)}</td><td>${pct(g.retention?.d1)}</td><td>${pct(g.retention?.d7)}</td>
-                  <td>${dec(s.engagementMinPerDau)}</td><td>${money(s.revenue, g.currency)}</td></tr>`;
+                  <td>${dec(s.engagementMinPerDau)}</td>
+                  <td>${s.spend != null ? money(s.spend, g.currency) : '–'}</td><td>${money(s.revenue, g.currency)}</td>
+                  <td class="${s.profit < 0 ? 'neg' : ''}">${s.profit != null ? money(s.profit, g.currency) : '–'}</td><td>${pct(s.roas)}</td></tr>`;
               })
               .join('')}</tbody>
           </table></div>

@@ -32,13 +32,14 @@ If Vercel doesn't redeploy after the bot's commit, go to **Vercel → Settings �
 
 ## Everyday changes
 
-- **Add a game:** add an entry to `games.json` (`id`, `name`, `ga4PropertyId`, and optionally `currency`, which defaults to `USD`). Then give the service account Viewer access on that property.
+- **Add a game:** add an entry to `games.json` (`id`, `name`, `ga4PropertyId`, optional `currency` (default `USD`), and `adCampaigns`). Then give the service account Viewer access on that property.
 - **Fetch locally:** save the key as `service-account.json` in this folder and run `npm run fetch`.
 - **Past days:** every fetch also saves `public/data/history/<day>.json`, and the page's **Day** menu opens any saved day. To fill in days that weren't fetched (for example after adding a game), run `node scripts/fetch.mjs --backfill 2026-10-21`; one snapshot is about 25 KB. To redo a single day, run `node scripts/fetch.mjs --end 2026-11-01`.
 - **Preview locally:** serve the page with `python -m http.server --directory public`. Run `npm run demo` first if you want fake data.
 
 ## Notes
 
+- **Ad spend** comes from GA4's Google Ads cost (`advertiserAdCost`). Every linked property reports all campaigns in the Ads account, so a game only counts campaigns whose name contains one of its `adCampaigns` words (case and punctuation ignored). Profit = revenue − ad spend, and ROAS = revenue ÷ ad spend.
 - GA4 can revise the last day or two of data. Each run re-fetches 30 days, so older numbers correct themselves.
 - Retention averages use only install days with at least 20 installs.
 - Ad revenue shows only if AdMob is linked to the game's Firebase project.
